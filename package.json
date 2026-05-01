@@ -1,0 +1,14 @@
+{
+  "name": "pyrana-podcasts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Apps Script bot that turns daily PYRANA Research emails into a Spotify podcast.",
+  "scripts": {
+    "push": "clasp push",
+    "open": "clasp open",
+    "logs": "clasp logs --watch"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.4.2"
+  }
+}
