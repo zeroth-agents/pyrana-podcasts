@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Fri, 01 May 2026 21:41:10 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2026 22:26:05 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — April 27, 2026]]></title>
+      <description><![CDATA[Okay so imagine you've been building this elaborate memory system for your AI agents — graph database, vector store, hybrid retrieval, the whole thing — and then a paper drops that says, yeah, we beat all of that with one query and a typed schema. That's Memanto, and honestly it should make a lot of teams a little nervous today. Tell me what's actually happening under the hood here, because "typed]]></description>
+      <pubDate>Mon, 27 Apr 2026 12:43:32 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_27_2026.mp3" length="5525807" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_27_2026.mp3</guid>
+      <itunes:duration>344</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 30, 2026]]></title>
       <description><![CDATA[Okay so imagine you're an AI agent, and every time you face a new situation, you can dynamically reach into a toolkit and assemble exactly the right skills on the fly. That's the core idea behind a paper called Bian Que, and honestly it might be the most practically useful thing we've read all week. Bian Que, named after the legendary Chinese physician by the way, and the metaphor actually works —]]></description>
