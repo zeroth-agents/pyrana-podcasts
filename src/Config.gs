@@ -19,7 +19,7 @@ const CONFIG = {
   // Audio files and the RSS feed are committed to this repo and served
   // via GitHub Pages from the /docs folder on the default branch.
   GITHUB: {
-    owner: 'zeroth-technology',
+    owner: 'zeroth-agents',
     repo: 'pyrana-podcasts',
     branch: 'main',
     // Path inside the repo where Pages serves from. Must match the
@@ -29,7 +29,7 @@ const CONFIG = {
     // Format with no trailing slash:
     //   https://<owner>.github.io/<repo>
     //   https://podcasts.example.com
-    pagesBaseUrl: 'https://zeroth-technology.github.io/pyrana-podcasts',
+    pagesBaseUrl: 'https://zeroth-agents.github.io/pyrana-podcasts',
     // Author identity used on commits. Visible in git log.
     commitAuthor: { name: 'PYRANA Podcast Bot', email: 'jamey@zeroth.technology' },
   },

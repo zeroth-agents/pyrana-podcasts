@@ -63,10 +63,15 @@ If you don't have these in KV yet, create them at https://console.anthropic.com/
 ### 2. Push this repo to GitHub
 
 ```bash
-gh repo create zeroth-technology/pyrana-podcasts --private --source . --push
+gh repo create zeroth-agents/pyrana-podcasts --public --source . --push
 ```
 
-(Adjust owner if needed. If you change the name or owner, update `CONFIG.GITHUB.owner`, `repo`, and `pagesBaseUrl` in `src/Config.gs`.)
+The repo must be **public** — Spotify can't authenticate against GitHub
+to fetch a private feed, and GitHub Pages on private repos requires auth.
+The repo holds no secrets (those live only in Apps Script Properties).
+
+If you change the name or owner, update `CONFIG.GITHUB.owner`, `repo`,
+and `pagesBaseUrl` in `src/Config.gs`.
 
 ### 3. Enable GitHub Pages
 
@@ -77,14 +82,14 @@ Repo → **Settings → Pages**:
 
 After ~30 sec, you should be able to load:
 ```
-https://zeroth-technology.github.io/pyrana-podcasts/cover.png
+https://zeroth-agents.github.io/pyrana-podcasts/cover.png
 ```
 
 ### 4. Create a fine-grained Personal Access Token
 
 GitHub → profile → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**
 
-- **Resource owner**: zeroth-technology (or your account)
+- **Resource owner**: zeroth-agents (or your account)
 - **Repository access**: Only select repositories → `pyrana-podcasts`
 - **Repository permissions** → Contents: **Read and write**
 - Expiration: 1 year (set a calendar reminder to rotate)
