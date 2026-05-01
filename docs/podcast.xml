@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Fri, 01 May 2026 22:27:27 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2026 22:28:42 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — April 29, 2026]]></title>
+      <description><![CDATA[Okay so imagine you're building a multi-agent framework, you've got your architecture mostly figured out, and then an open-source project drops that basically builds the same thing — but with one elegant design decision you haven't made yet. That's the OxyGent situation today, and we need to talk about it. Yeah OxyGent is the paper of the day for me, no question. Score of 8.05, high priority flag.]]></description>
+      <pubDate>Wed, 29 Apr 2026 12:52:39 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_29_2026.mp3" length="5425893" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_29_2026.mp3</guid>
+      <itunes:duration>324</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 28, 2026]]></title>
       <description><![CDATA[Okay, picture this — a multi-agent system specifically designed to generate real-world evidence from clinical data, built on a standardized medical data model, and it scores an 8.4 out of 10 on our internal relevance tracker. That's our lead today, and honestly it might be the most practically important paper we've covered this month. FastOMOP. And for listeners who aren't deep in the pharma data ]]></description>
