@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Fri, 01 May 2026 22:28:42 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 08 May 2026 13:26:18 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 8, 2026]]></title>
+      <description><![CDATA[Okay, so imagine you're building what you call a superintelligent retrieval agent — and then a paper drops with literally that name. That's the energy we're starting with today. It's validating and a little terrifying at the same time. The paper scores an eight-point-oh-five on our priority index, which is the highest we've flagged in weeks, and the reason it hits that hard is that it's not just a]]></description>
+      <pubDate>Fri, 08 May 2026 12:50:18 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_8_2026.mp3" length="5056590" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_8_2026.mp3</guid>
+      <itunes:duration>306</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 29, 2026]]></title>
       <description><![CDATA[Okay so imagine you're building a multi-agent framework, you've got your architecture mostly figured out, and then an open-source project drops that basically builds the same thing — but with one elegant design decision you haven't made yet. That's the OxyGent situation today, and we need to talk about it. Yeah OxyGent is the paper of the day for me, no question. Score of 8.05, high priority flag.]]></description>
