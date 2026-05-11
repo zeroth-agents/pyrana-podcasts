@@ -7,9 +7,11 @@ PYRANA email lands in Gmail
         ↓
 Apps Script trigger fires (hourly)
         ↓
-Claude writes a 2-host podcast script from the email
+Apps Script extracts paper links and fetches their content
         ↓
-ElevenLabs synthesizes the audio (one voice per host)
+Claude does a research pass over digest + papers, then writes a 2-host script
+        ↓
+Gemini multi-speaker TTS renders the conversation; vendored lamejs encodes MP3
         ↓
 Apps Script commits MP3 + RSS feed to this repo
         ↓
@@ -40,8 +42,11 @@ pyrana-podcasts/
     ├── appsscript.json    ← Manifest (OAuth scopes, runtime)
     ├── Code.gs            ← Main loop. Idempotent email processing.
     ├── Config.gs          ← Voices, episode length, podcast metadata, repo coords.
-    ├── Claude.gs          ← Claude API. Generates dialogue.
-    ├── ElevenLabs.gs      ← ElevenLabs API. Synthesizes & concatenates audio.
+    ├── Papers.gs          ← Extracts arXiv/paper links and fetches source text.
+    ├── Claude.gs          ← Two-pass: research notes → 2-host dialogue.
+    ├── Gemini.gs          ← Multi-speaker TTS (returns 24kHz PCM chunks).
+    ├── Audio.gs           ← Streams PCM through lamejs to produce MP3.
+    ├── LameJs.gs          ← Vendored pure-JS MP3 encoder (lamejs).
     ├── Github.gs          ← Commits MP3s + RSS via GitHub API.
     ├── RSS.gs             ← Pure RSS XML build/parse.
     └── Setup.gs           ← One-time setup helpers, run in order.
@@ -65,18 +70,16 @@ The only moving parts the bot writes to are `docs/episodes/*.mp3` and `docs/podc
 
 ## Cost reality
 
-Daily ~5-min episodes × 30/month ≈ 150k characters of TTS.
+Daily ~12-min episodes × 30/month with the two-pass Claude pipeline + Gemini TTS:
 
-| Tier | Monthly | Char allowance | Episodes/mo |
-|---|---|---|---|
-| ElevenLabs Creator | $22 | 100k | ~15–18 |
-| ElevenLabs Pro | $99 | 500k | unlimited daily |
-| OpenAI TTS (alt.) | ~$3–5 | pay-as-you-go | unlimited daily |
-| Google Cloud TTS (alt.) | ~$1–2 | pay-as-you-go | unlimited daily |
+| Component | Per episode | Per month |
+|---|---|---|
+| Claude (research pass, Sonnet) | ~$0.05 | ~$1.50 |
+| Claude (script pass, Opus) | ~$0.30–0.50 | ~$10–15 |
+| Gemini multi-speaker TTS | ~$0.10–0.20 | ~$3–6 |
+| Apps Script, GitHub Pages, Spotify ingestion | free | free |
 
-Anthropic API is ~$0.10–0.30/episode. Apps Script, GitHub Pages, and Spotify ingestion are free.
-
-For daily episodes on a budget: swap ElevenLabs for OpenAI TTS — `src/ElevenLabs.gs` is ~80 lines, replacing it is a one-evening job.
+Total ≈ **$15–25/month** for daily 12-min episodes — roughly a quarter of the prior ElevenLabs Pro setup.
 
 ---
 
@@ -96,7 +99,7 @@ The full step-by-step is in **SETUP.md**. The TL;DR:
 4. **Set Script Properties** in the Apps Script editor (Project Settings → Script Properties):
    ```
    ANTHROPIC_API_KEY    = sk-ant-...           (Azure KV: demos-anthropic-api-key)
-   ELEVENLABS_API_KEY   = ...                  (Azure KV: demos-eleven-labs-api-key)
+   GOOGLE_API_KEY       = ...                  (Azure KV: demos-google-gemini-api-key)
    GITHUB_TOKEN         = github_pat_...
    ```
 5. **Run setup steps in order** from the function dropdown:
@@ -104,7 +107,8 @@ The full step-by-step is in **SETUP.md**. The TL;DR:
    | Function | What it does | Time |
    |---|---|---|
    | `setup_1_validateGithub` | Confirms PAT works, cover art is committed, Pages is live | ~5 sec |
-   | `setup_2_dryRun` | Validates Claude + ElevenLabs with tiny test calls | ~10 sec |
+   | `setup_2_dryRun` | Validates Claude, Gemini TTS, and lamejs with tiny test calls | ~15 sec |
+   | `setup_2b_testGemini` | (Optional) Renders a 1-min test clip to Drive so you can listen to the voices | ~30 sec |
    | `setup_3_firstEpisode` | Generates first real episode end-to-end | ~3 min |
    | `setup_4_getFeedUrl` | Prints RSS URL for Spotify submission | instant |
    | `setup_5_installTrigger` | Installs hourly autopilot | instant |
@@ -119,11 +123,12 @@ After step 5, the bot runs on its own. Every new PYRANA email becomes a Spotify 
 
 | Want to change... | Edit |
 |---|---|
-| Voices | `src/Config.gs` → `ELEVENLABS.voiceA` / `voiceB` |
+| Voices | `src/Config.gs` → `GEMINI.voiceA` / `voiceB` (catalog: Kore, Puck, Charon, Aoede, Fenrir, Leda, Orus, Zephyr, Achernar) |
 | Episode length | `src/Config.gs` → `CLAUDE.targetMinutes` |
 | Show title / description | `src/Config.gs` → `PODCAST.*` |
 | Cover art | Replace `docs/cover.png` (1400×1400 PNG) and commit |
-| Host personalities, structure | `src/Claude.gs` → `systemPrompt` |
+| Host personalities, structure | `src/Claude.gs` → research and script `system` prompts |
+| Source-paper depth | `src/Papers.gs` → `PAPERS_MAX_*` constants |
 | Frequency | Reinstall trigger with `everyMinutes(N)` or `everyHours(N)` in `Setup.gs` |
 | Pause everything | Delete trigger from Apps Script → Triggers (left sidebar) |
 | Custom domain | Add a CNAME to `<owner>.github.io`, set `pagesBaseUrl` in `Config.gs` |
@@ -144,8 +149,10 @@ Each is a small extension if you want them later.
 ## Architecture notes for future-you
 
 - **Idempotency**: `LAST_PROCESSED_TIMESTAMP` cursor in Script Properties. Failed runs don't advance the cursor, so they retry next trigger. The RSS feed itself also dedupes on file path.
-- **MP3 concatenation**: Naive byte concat works because MP3 is a stream-of-frames format. Most podcast players handle the seam transparently.
+- **Two-pass Claude**: Pass 1 (Sonnet) reads the digest plus fetched paper sources and writes structured deep notes. Pass 2 (Opus) writes dialogue grounded in those notes. Notes are the only source of truth for the script — papers are not re-read in pass 2.
+- **TTS chunking**: Gemini multi-speaker has a per-call output cap, so the script is split into ~250-word chunks. Each chunk is a single API call returning 24kHz 16-bit mono PCM.
+- **MP3 encoding**: PCM chunks are streamed through `lamejs` (vendored as `LameJs.gs`) so we never hold the full ~34 MB of raw audio in memory. Output is 64 kbps mono — clear for speech, ~6 MB per 12-min episode.
 - **RSS feed**: Stored at `docs/podcast.xml`, served via Pages. Capped at 50 most recent episodes.
 - **GitHub commits**: Each episode is two commits (MP3, then RSS). `commitAuthor` in Config controls how they show up in `git log`.
-- **Apps Script time limit**: 6 minutes. ~5-min episodes generate in 2–3 min including the GitHub commits. Longer episodes risk timeout.
+- **Apps Script time limit**: 6 minutes. Gemini multi-speaker is much faster than per-turn ElevenLabs synthesis (a few API calls vs ~150), so 12-min episodes fit. If you push past 15 min, watch the trigger budget.
 - **Bandwidth**: Spotify rehosts MP3s after first ingest, so ongoing GitHub Pages bandwidth is mostly the RSS XML — well under any limit.

@@ -53,9 +53,9 @@ function setup_1_validateGithub() {
 function setup_2_dryRun() {
   const props = PropertiesService.getScriptProperties();
   const claude = props.getProperty('ANTHROPIC_API_KEY');
-  const eleven = props.getProperty('ELEVENLABS_API_KEY');
+  const google = props.getProperty('GOOGLE_API_KEY');
   if (!claude) throw new Error('ANTHROPIC_API_KEY not set');
-  if (!eleven) throw new Error('ELEVENLABS_API_KEY not set');
+  if (!google) throw new Error('GOOGLE_API_KEY not set');
 
   Logger.log('Testing Claude...');
   const claudeResp = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
@@ -63,7 +63,7 @@ function setup_2_dryRun() {
     contentType: 'application/json',
     headers: { 'x-api-key': claude, 'anthropic-version': '2023-06-01' },
     payload: JSON.stringify({
-      model: CONFIG.CLAUDE.model,
+      model: CONFIG.CLAUDE.researchModel,
       max_tokens: 50,
       messages: [{ role: 'user', content: 'Say "hello podcast" and nothing else.' }],
     }),
@@ -74,24 +74,45 @@ function setup_2_dryRun() {
   }
   Logger.log('  ✓ Claude OK');
 
-  Logger.log('Testing ElevenLabs...');
-  const elevenResp = UrlFetchApp.fetch(
-    'https://api.elevenlabs.io/v1/text-to-speech/' + CONFIG.ELEVENLABS.voiceA,
-    {
-      method: 'post',
-      contentType: 'application/json',
-      headers: { 'xi-api-key': eleven, 'accept': 'audio/mpeg' },
-      payload: JSON.stringify({ text: 'Test.', model_id: CONFIG.ELEVENLABS.model }),
-      muteHttpExceptions: true,
-    }
-  );
-  if (elevenResp.getResponseCode() !== 200) {
-    throw new Error('ElevenLabs failed: ' + elevenResp.getContentText().slice(0, 300));
+  Logger.log('Testing Gemini multi-speaker TTS (short clip)...');
+  const testTurns = [
+    { speaker: 'A', text: 'Quick test of the audio pipeline.' },
+    { speaker: 'B', text: 'Sounds good. We are live.' },
+  ];
+  const pcm = synthesizeEpisode(testTurns);
+  const totalBytes = pcm.pcmChunks.reduce(function (n, c) { return n + c.length; }, 0);
+  if (totalBytes < 1000) {
+    throw new Error('Gemini TTS returned suspiciously small payload: ' + totalBytes + ' bytes');
   }
-  Logger.log('  ✓ ElevenLabs OK');
+  Logger.log('  ✓ Gemini TTS OK (' + totalBytes + ' bytes PCM)');
+
+  Logger.log('Testing MP3 encoder (lamejs)...');
+  const mp3 = encodePcmToMp3(pcm);
+  const mp3Bytes = mp3.getBytes().length;
+  if (mp3Bytes < 500) {
+    throw new Error('MP3 encoder returned suspiciously small file: ' + mp3Bytes + ' bytes');
+  }
+  Logger.log('  ✓ lamejs OK (' + mp3Bytes + ' bytes MP3)');
 
   Logger.log('');
   Logger.log('✅ All APIs working. Run setup_3_firstEpisode() to generate a real episode.');
+}
+
+/**
+ * STEP 2b — Optional: render and Drive-save a one-minute Gemini test clip
+ * so you can listen to the voices before committing to a full episode.
+ */
+function setup_2b_testGemini() {
+  const turns = [
+    { speaker: 'A', text: 'Welcome to the test. We\'re trying out the new voices today.' },
+    { speaker: 'B', text: 'Yeah, this is Gemini multi-speaker. Tell me how it sounds.' },
+    { speaker: 'A', text: 'I think it has a more natural cadence than the old setup.' },
+    { speaker: 'B', text: 'Right — and it handles interjections without the awkward gap.' },
+  ];
+  const pcm = synthesizeEpisode(turns);
+  const mp3 = encodePcmToMp3(pcm);
+  const file = DriveApp.createFile(mp3.setName('pyrana-tts-test.mp3'));
+  Logger.log('✅ Test clip saved to Drive: ' + file.getUrl());
 }
 
 /**
@@ -151,4 +172,39 @@ function setup_5_installTrigger() {
 function utility_resetCursor() {
   PropertiesService.getScriptProperties().deleteProperty('LAST_PROCESSED_TIMESTAMP');
   Logger.log('✅ Cursor reset. Next trigger will reprocess emails from the last 7 days.');
+}
+
+/**
+ * Utility — write a secret into Script Properties from inside Apps Script,
+ * no GUI click-through. Use for first-time setup or key rotation.
+ *
+ * Workflow:
+ *   1. Paste the key into the literal below
+ *   2. Run this function once from the editor
+ *   3. Blank the literal back to '' and save BEFORE you `clasp push`
+ *      so the key never lands in git
+ *
+ * Anything left blank is left untouched — paste only the keys you want
+ * to set on this run.
+ */
+function utility_setSecrets() {
+  const secrets = {
+    ANTHROPIC_API_KEY: '',
+    GOOGLE_API_KEY: '',
+    GITHUB_TOKEN: '',
+  };
+
+  const props = PropertiesService.getScriptProperties();
+  let wrote = 0;
+  for (const k in secrets) {
+    if (secrets[k]) {
+      props.setProperty(k, secrets[k]);
+      Logger.log('  ✓ wrote ' + k + ' (' + secrets[k].length + ' chars)');
+      wrote++;
+    }
+  }
+  if (wrote === 0) {
+    throw new Error('No secrets pasted. Edit utility_setSecrets() and paste the key(s) you want to set.');
+  }
+  Logger.log('✅ ' + wrote + ' secret(s) written. Blank the literals and save before pushing.');
 }

@@ -12,9 +12,15 @@ PYRANA email arrives
     ↓
 Apps Script trigger (hourly)
     ↓
-Claude writes a 2-host podcast script
+Apps Script extracts paper links from the email and fetches their content
     ↓
-ElevenLabs synthesizes the audio
+Claude does a research pass (digest + papers) → structured deep notes
+    ↓
+Claude writes a 2-host podcast script grounded in those notes
+    ↓
+Gemini multi-speaker TTS renders the conversation (24kHz PCM)
+    ↓
+Vendored lamejs encodes PCM → MP3 in-process
     ↓
 Apps Script commits MP3 + RSS feed to this GitHub repo
     ↓
@@ -29,18 +35,18 @@ Episode playable in Spotify (and Apple Podcasts, Overcast, etc.)
 
 ## Cost reality (read before starting)
 
-| Service | What you pay | Notes |
-|---|---|---|
-| Anthropic API | ~$0.10–0.30/episode | Negligible at this volume |
-| ElevenLabs Creator ($22/mo) | 100k chars/mo | Covers ~15–20 episodes/mo |
-| ElevenLabs Pro ($99/mo) | 500k chars/mo | Needed for daily episodes |
-| Google Apps Script | Free | Generous free quota |
-| GitHub Pages | Free | 100 GB/mo bandwidth, plenty |
-| Spotify for Podcasters | Free | RSS ingestion is free |
+Daily 12-min episodes with the two-pass Claude pipeline + Gemini TTS:
 
-**Daily PYRANA emails × ~5-min episodes ≈ 150k chars/month → you'll need Pro tier ($99/mo) for full daily coverage**, or run weekday-only with shorter episodes.
+| Service | Per episode | Per month (daily) | Notes |
+|---|---|---|---|
+| Anthropic — Sonnet (research pass) | ~$0.05 | ~$1.50 | Reads digest + fetched papers |
+| Anthropic — Opus (script pass) | ~$0.30–0.50 | ~$10–15 | Where dialogue quality lives |
+| Gemini multi-speaker TTS | ~$0.10–0.20 | ~$3–6 | Pay-as-you-go, no minimum |
+| Google Apps Script | Free | Free | Generous free quota |
+| GitHub Pages | Free | Free | 100 GB/mo bandwidth, plenty |
+| Spotify for Podcasters | Free | Free | RSS ingestion is free |
 
-If $99/mo is steep, swap ElevenLabs for OpenAI TTS or Google Cloud TTS — `src/ElevenLabs.gs` is small and modular.
+**Total ≈ $15–25/month** for daily coverage. Roughly a quarter of the prior ElevenLabs Pro setup.
 
 ---
 
@@ -53,12 +59,12 @@ If $99/mo is steep, swap ElevenLabs for OpenAI TTS or Google Cloud TTS — `src/
 az keyvault secret show --vault-name pyrana-demo --name demos-anthropic-api-key --query value -o tsv
 ```
 
-**ElevenLabs** — same pattern:
+**Gemini** — same pattern:
 ```bash
-az keyvault secret show --vault-name pyrana-demo --name demos-eleven-labs-api-key --query value -o tsv
+az keyvault secret show --vault-name pyrana-demo --name demos-google-gemini-api-key --query value -o tsv
 ```
 
-If you don't have these in KV yet, create them at https://console.anthropic.com/ and https://elevenlabs.io/ and store them.
+If you don't have these in KV yet, create them at https://console.anthropic.com/ and https://aistudio.google.com/app/apikey and store them.
 
 ### 2. Push this repo to GitHub
 
@@ -118,7 +124,7 @@ Add three properties:
 | Property name | Value |
 |---|---|
 | `ANTHROPIC_API_KEY` | `sk-ant-...` |
-| `ELEVENLABS_API_KEY` | your ElevenLabs key |
+| `GOOGLE_API_KEY` | your Gemini API key |
 | `GITHUB_TOKEN` | `github_pat_...` from step 4 |
 
 Save.
@@ -130,8 +136,9 @@ In the editor's function dropdown, run each of these once. The first time you ru
 | Function | What it does |
 |---|---|
 | `setup_1_validateGithub` | Confirms the PAT works, cover art is committed, Pages is live |
-| `setup_2_dryRun` | Tests Claude + ElevenLabs with tiny calls |
-| `setup_3_firstEpisode` | Generates the first real episode end-to-end (~3 min) |
+| `setup_2_dryRun` | Tests Claude, Gemini TTS, and lamejs encoder with tiny calls |
+| `setup_2b_testGemini` | Optional: renders a 1-min test clip to your Drive so you can listen to the voices first |
+| `setup_3_firstEpisode` | Generates the first real episode end-to-end (~4–5 min) |
 | `setup_4_getFeedUrl` | Prints your RSS feed URL — copy this |
 | `setup_5_installTrigger` | Installs the hourly autopilot |
 
@@ -169,11 +176,12 @@ After `setup_5_installTrigger`:
 
 | Want to change... | Edit |
 |---|---|
-| Voices | `Config.gs` → `ELEVENLABS.voiceA` / `voiceB` (browse https://elevenlabs.io/app/voice-library) |
+| Voices | `Config.gs` → `GEMINI.voiceA` / `voiceB`. Try Kore, Puck, Charon, Aoede, Fenrir, Leda, Orus, Zephyr, Achernar — preview combos with `setup_2b_testGemini`. |
 | Episode length | `Config.gs` → `CLAUDE.targetMinutes` |
 | Show title / description | `Config.gs` → `PODCAST.*` |
 | Cover art | Replace `docs/cover.png` (1400×1400 PNG) and commit |
-| Host personalities, structure | `Claude.gs` → `systemPrompt` |
+| Host personalities, structure | `Claude.gs` → research and script `system` prompts |
+| Source-paper depth | `Papers.gs` → `PAPERS_MAX_*` constants (per-paper and total char caps) |
 | Frequency | Reinstall trigger with `everyMinutes()` or `everyHours(N)` |
 | Pause everything | Delete trigger from **Triggers** (left sidebar in Apps Script) |
 | Custom domain | Point CNAME at `<owner>.github.io`, update `pagesBaseUrl` in Config |
@@ -190,13 +198,17 @@ After `setup_5_installTrigger`:
 
 **Pages probe 404** → Pages not enabled, or still propagating (wait 1–2 min after first enabling).
 
-**ElevenLabs returns 401** → Wrong API key. Re-copy from your ElevenLabs profile.
+**Gemini TTS returns 401/403** → Wrong `GOOGLE_API_KEY`, or the key isn't enabled for the Generative Language API. Re-issue at https://aistudio.google.com/app/apikey.
 
-**ElevenLabs returns 402** → Out of credits. Check your subscription quota.
+**Gemini TTS returns 400 with "model not found"** → The TTS preview model name has rotated. Update `CONFIG.GEMINI.model` to the current Gemini multi-speaker TTS model.
+
+**`Gemini TTS returned no audio`** → Usually means the model rejected the prompt (safety, length, or formatting). Check the response body in the log; shorten the chunk by lowering `GEMINI_CHUNK_TARGET_WORDS` in `Gemini.gs`.
+
+**Encoder produces silent or garbled MP3** → Sample-rate mismatch. `CONFIG.GEMINI.sampleRate` must equal Gemini's actual output rate (24000 today).
 
 **Spotify rejects the feed** → Open the feed URL in a browser; it should be valid XML with an `<itunes:image>` tag pointing at a real PNG. If the cover URL 404s, fix the cover commit.
 
-**Script timeout (6 min limit)** → Episodes longer than ~10 min may exceed Apps Script's runtime limit. Reduce `targetMinutes` in Config.
+**Script timeout (6 min limit)** → Episodes past ~15 min may exceed Apps Script's runtime. Reduce `CLAUDE.targetMinutes` in Config, or lower `MP3_BITRATE_KBPS` if the encoder pass is the bottleneck.
 
 **Scripts produce weird pronunciation** → Edit the system prompt in `Claude.gs` to add specific guidance, or pre-process the email body to expand abbreviations.
 
@@ -204,7 +216,7 @@ After `setup_5_installTrigger`:
 
 ## What this does NOT do
 
-- Doesn't intro-mix music or sound effects (could add via additional ElevenLabs Sound Effects API calls)
+- Doesn't intro-mix music or sound effects (would require pre-rendered clips committed to the repo and concatenated in Audio.gs)
 - Doesn't chapter markers (Spotify supports them via RSS extension; not implemented here)
 - Doesn't transcribe — the script itself isn't published, only audio
 - Doesn't handle multiple newsletters (single sender for now; trivial to extend the Gmail query)

@@ -5,7 +5,7 @@
  * Set them via:  Project Settings → Script Properties → Add property
  *
  *   ANTHROPIC_API_KEY     — sk-ant-...
- *   ELEVENLABS_API_KEY    — your ElevenLabs API key
+ *   GOOGLE_API_KEY        — Gemini API key (multi-speaker TTS)
  *   GITHUB_TOKEN          — fine-grained PAT, Contents: read+write on the host repo
  *
  * Everything below is non-secret tuning you can edit freely.
@@ -50,22 +50,31 @@ const CONFIG = {
   },
 
   // ─── Claude (script writing) ──────────────────────────────────────
+  // Two-pass generation:
+  //   researchModel reads the email + fetched papers and writes deep notes.
+  //   scriptModel turns those notes into two-host dialogue.
+  // Sonnet for research is plenty (it's structured extraction); Opus for
+  // the script is where dialogue quality actually matters.
   CLAUDE: {
-    model: 'claude-sonnet-4-6',
-    maxTokens: 4000,
-    targetMinutes: 5,
+    researchModel: 'claude-sonnet-4-6',
+    scriptModel: 'claude-opus-4-7',
+    researchMaxTokens: 8000,
+    scriptMaxTokens: 16000,
+    targetMinutes: 12,
   },
 
-  // ─── ElevenLabs (audio synthesis) ─────────────────────────────────
-  ELEVENLABS: {
-    voiceA: '21m00Tcm4TlvDq8ikWAM',  // Rachel — warm, conversational
-    voiceB: 'pNInz6obpgDQGcFmaJgB',  // Adam — deep, authoritative
-    model: 'eleven_turbo_v2_5',
-    voiceSettings: {
-      stability: 0.5,
-      similarity_boost: 0.75,
-      style: 0.3,
-      use_speaker_boost: true,
-    },
+  // ─── Gemini (multi-speaker TTS) ───────────────────────────────────
+  // Gemini's multi-speaker TTS produces NotebookLM-style two-host audio
+  // in a single call per chunk. Output is 24kHz 16-bit mono PCM, which
+  // we encode to MP3 in-process via vendored lamejs.
+  //
+  // Voice names: pick from the Gemini prebuilt voice catalog. Some
+  // expressive options: Kore, Puck, Charon, Aoede, Fenrir, Leda, Orus,
+  // Zephyr, Achernar. Mix-and-match for the host pairing you like.
+  GEMINI: {
+    model: 'gemini-2.5-flash-preview-tts',
+    voiceA: 'Kore',     // HOST_A — warm
+    voiceB: 'Charon',   // HOST_B — authoritative
+    sampleRate: 24000,  // Gemini TTS output rate (don't change)
   },
 };
