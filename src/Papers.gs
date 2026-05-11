@@ -15,8 +15,8 @@
 
 // Keep total source material under this many chars so we don't blow
 // past Claude's context or the Apps Script 6-min trigger window.
-const PAPERS_MAX_PER_PAPER_CHARS = 12000;
-const PAPERS_MAX_TOTAL_CHARS = 60000;
+const PAPERS_MAX_PER_PAPER_CHARS = 30000;
+const PAPERS_MAX_TOTAL_CHARS = 120000;
 const PAPERS_MAX_COUNT = 8;
 const PAPERS_FETCH_TIMEOUT_MS = 15000;
 
@@ -113,6 +113,10 @@ function fetchPaperContent(link) {
   try {
     if (link.kind === 'arxiv') {
       const id = link.url.match(/abs\/([0-9]{4}\.[0-9]{4,5})/)[1];
+      // Prefer full HTML body — much richer than the abstract — and
+      // fall back to the abstract API if HTML isn't available for this paper.
+      const html = fetchArxivHtml(id, link.url);
+      if (html) return html;
       return fetchArxivAbstract(id, link.url);
     }
     return fetchGenericPage(link.url);
@@ -120,6 +124,41 @@ function fetchPaperContent(link) {
     Logger.log('    ⚠️  fetch failed for ' + link.url + ': ' + e.message);
     return null;
   }
+}
+
+/**
+ * Fetch the rendered HTML version of an arXiv paper (full body, not
+ * just the abstract). arXiv exposes this at /html/<id> for most papers
+ * since 2024; older papers may 404 and fall back to the abstract.
+ */
+function fetchArxivHtml(id, canonicalUrl) {
+  const url = 'https://arxiv.org/html/' + id;
+  const res = UrlFetchApp.fetch(url, {
+    method: 'get',
+    muteHttpExceptions: true,
+    followRedirects: true,
+    headers: { 'User-Agent': 'pyrana-podcast-bot/1.0' },
+  });
+  if (res.getResponseCode() !== 200) return null;
+
+  const html = res.getContentText();
+  // ar5iv-style pages embed a "no HTML available" notice for papers
+  // that don't have a rendered version yet. Detect and fall back.
+  if (/no HTML available|cannot be rendered/i.test(html)) return null;
+
+  const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const title = titleMatch
+    ? decodeXml(titleMatch[1]).replace(/\s+/g, ' ').replace(/\s*\|\s*arXiv.*$/i, '').trim()
+    : id;
+
+  const bodyText = stripHtml(html);
+  if (bodyText.length < 2000) return null;  // probably a stub page
+
+  return {
+    url: canonicalUrl,
+    title: title,
+    text: bodyText.slice(0, PAPERS_MAX_PER_PAPER_CHARS),
+  };
 }
 
 /**

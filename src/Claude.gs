@@ -117,7 +117,9 @@ function generatePodcastScript(subject, emailBody, papers) {
   Logger.log('  → ' + notes.length + ' chars of notes');
 
   Logger.log('  ✏️  Script pass...');
-  const targetWords = CONFIG.CLAUDE.targetMinutes * 150;
+  const targetMinutes = CONFIG.CLAUDE.targetMinutes;
+  const targetWords = targetMinutes * 150;
+  const minWords = CONFIG.CLAUDE.minWords || Math.round(targetWords * 0.85);
 
   const system =
     'You are head writer for "' + CONFIG.PODCAST.title + '", a daily AI research ' +
@@ -127,21 +129,34 @@ function generatePodcastScript(subject, emailBody, papers) {
     '  HOST_B — deep technical chops. Sharp, specific opinions. Names mechanisms, ' +
     'cites numbers, draws comparisons to prior work. Will push back when ' +
     'something doesn\'t add up.\n\n' +
-    'Your job: turn the research notes below into a ~' + CONFIG.CLAUDE.targetMinutes +
-    '-minute conversation (~' + targetWords + ' words total). The notes are ' +
-    'your source of truth — every claim in the script must be grounded in them.\n\n' +
-    'Structure:\n' +
-    '  1. Cold open (~30s): hook on the single most interesting result. Specific, ' +
-    'not vague. "X went from 40% to 73% on benchmark Y" beats "big jump in performance."\n' +
-    '  2. Walk through the papers, one at a time, deeper than a digest:\n' +
-    '       • What\'s the actual claim, with numbers\n' +
-    '       • How does the mechanism work — explain it, don\'t just label it\n' +
-    '       • The steel-manned objection. HOST_B should voice it; HOST_A can ' +
-    'push back or accept. Real disagreement is fine.\n' +
-    '       • Why a builder should care this quarter\n' +
-    '  3. Connections segment: what trend is forming across these papers? Name ' +
-    'related work explicitly.\n' +
-    '  4. Sign-off (~15s): one sentence teasing what to watch for tomorrow.\n\n' +
+    'Your job: turn the research notes below into a ' + targetMinutes +
+    '-minute conversation (target ' + targetWords + ' words, MINIMUM ' + minWords +
+    ' words — do not produce a shorter script). The notes are your source of ' +
+    'truth — every claim in the script must be grounded in them.\n\n' +
+    'LENGTH IS A HARD REQUIREMENT. If you are approaching the end of your ' +
+    'planned structure and are still under ' + minWords + ' words, you have ' +
+    'under-developed the papers. Go back into the notes and: walk through the ' +
+    'mechanism in more concrete detail, dwell longer on the steel-manned ' +
+    'objection, add a back-and-forth on what changes for builders, or surface ' +
+    'a deeper comparison to prior work. Do NOT pad with filler ("yeah", ' +
+    '"totally", recap loops) — add real substance from the notes.\n\n' +
+    'Structure (rough budget for a ' + targetMinutes + '-min episode):\n' +
+    '  1. Cold open (~45s, ~110 words): hook on the single most interesting ' +
+    'result. Specific, not vague. "X went from 40% to 73% on benchmark Y" ' +
+    'beats "big jump in performance."\n' +
+    '  2. Walk through the papers, one at a time. Each paper deserves roughly ' +
+    '3 minutes (~450 words) of dialogue covering:\n' +
+    '       • The actual claim, with numbers\n' +
+    '       • Mechanism walk-through — explain HOW it works, not just label it. ' +
+    'Two or three back-and-forth turns minimum on the mechanism alone.\n' +
+    '       • The steel-manned objection. HOST_B voices it; HOST_A pushes ' +
+    'back or concedes. Real disagreement is fine and welcome.\n' +
+    '       • Why a builder should care this quarter — concrete, not generic.\n' +
+    '  3. Connections segment (~90s, ~225 words): what trend is forming ' +
+    'across these papers? Name related work explicitly. This is where the ' +
+    'episode earns its place vs just reading the digest.\n' +
+    '  4. Sign-off (~20s): one or two sentences teasing what to watch for ' +
+    'tomorrow.\n\n' +
     'Voice and texture:\n' +
     '  • Two friends who happen to know a lot. Hard Fork meets Latent Space.\n' +
     '  • Use specific numbers, model names, benchmark names. Drop the abstraction.\n' +
