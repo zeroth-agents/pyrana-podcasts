@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 12 May 2026 15:51:58 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 16:05:19 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — April 29, 2026]]></title>
+      <description><![CDATA[Welcome back to PYRANA Daily. It's April 29th, 2026, and today we've got four papers that, taken together, basically sketch out what a serious agent stack looks like in 2026 — orchestration, memory, governance, and a real regulated deployment. The one I want to lead with: a framework called OxyGent that tries to collapse agents, tools, LLM calls, and entire reasoning flows into one interchangeable]]></description>
+      <pubDate>Wed, 29 Apr 2026 12:52:39 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_29_2026_v2.mp3" length="5985984" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_29_2026_v2.mp3</guid>
+      <itunes:duration>806</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 28, 2026]]></title>
       <description><![CDATA[Okay, so if you only remember one thing from today's episode, remember this phrase: Attention Latch. There's a paper out today that names a failure mode I think a lot of you have been hitting in production without knowing what to call it. Your agent anchors on a constraint from turn three of a fifty-turn conversation, the user updates the requirement at turn twenty, and the agent just… keeps optim]]></description>
@@ -44,15 +53,6 @@
       <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_8_2026.mp3" length="5056590" type="audio/mpeg"/>
       <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_8_2026.mp3</guid>
       <itunes:duration>306</itunes:duration>
-      <itunes:explicit>false</itunes:explicit>
-    </item>
-    <item>
-      <title><![CDATA[PYRANA Research Intelligence — April 29, 2026]]></title>
-      <description><![CDATA[Okay so imagine you're building a multi-agent framework, you've got your architecture mostly figured out, and then an open-source project drops that basically builds the same thing — but with one elegant design decision you haven't made yet. That's the OxyGent situation today, and we need to talk about it. Yeah OxyGent is the paper of the day for me, no question. Score of 8.05, high priority flag.]]></description>
-      <pubDate>Wed, 29 Apr 2026 12:52:39 GMT</pubDate>
-      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_29_2026.mp3" length="5425893" type="audio/mpeg"/>
-      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_29_2026.mp3</guid>
-      <itunes:duration>324</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
     <item>
