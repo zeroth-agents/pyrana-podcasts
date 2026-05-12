@@ -169,6 +169,9 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
   Logger.log('  ⬆️  Committing v2 MP3...');
   githubPutFile(audioPath, audioBlob.getBytes(), 'episode: ' + subject + ' (v2)');
 
+  Logger.log('  📝 Committing transcript...');
+  publishTranscript(scriptTurns, newFilename.replace(/\.mp3$/, ''), subject + ' (v2)');
+
   const audioInfo = {
     name: newFilename,
     size: audioBlob.getBytes().length,

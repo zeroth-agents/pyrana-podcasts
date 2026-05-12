@@ -21,6 +21,9 @@ function publishEpisode(audioBlob, subject, date, scriptTurns) {
   );
   Logger.log('  → ' + audioCommit.commit.sha.slice(0, 7));
 
+  Logger.log('  📝 Committing transcript...');
+  publishTranscript(scriptTurns, sanitizeFilename(subject), subject);
+
   const audioUrl = CONFIG.GITHUB.pagesBaseUrl + '/episodes/' + encodeURIComponent(filename);
   const audioInfo = {
     name: filename,
@@ -35,6 +38,21 @@ function publishEpisode(audioBlob, subject, date, scriptTurns) {
   updateRssFeed(audioInfo, scriptTurns);
 
   return audioInfo;
+}
+
+/**
+ * Commit the parsed script as a plain-text file next to the MP3 so it
+ * can be reviewed, diffed in PRs, or fed back into future prompt-tuning.
+ * Format: one turn per line, prefixed with HOST_A: / HOST_B:.
+ */
+function publishTranscript(scriptTurns, basename, subject) {
+  const path = CONFIG.GITHUB.publishDir + '/episodes/transcripts/' + basename + '.txt';
+  const lines = scriptTurns.map(function (t) {
+    return 'HOST_' + t.speaker + ': ' + t.text;
+  });
+  const text = lines.join('\n') + '\n';
+  const bytes = Utilities.newBlob(text).getBytes();
+  githubPutFile(path, bytes, 'transcript: ' + subject);
 }
 
 function updateRssFeed(audioInfo, scriptTurns) {

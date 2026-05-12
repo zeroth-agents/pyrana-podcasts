@@ -47,6 +47,20 @@ const CONFIG = {
     websiteUrl: 'https://pyrana.ai',
     // Cover art is committed at <publishDir>/cover.png.
     coverArtPath: 'cover.png',
+    // Builder context — threaded into both Claude prompts so the hosts
+    // speak as part of the Zeroth team building PYRANA and the Cortex
+    // Context Engine, not as generic narrators. Refine freely; this is
+    // the substrate the model uses for "we" / "our work" framing.
+    buildContext:
+      'The hosts work at Zeroth Agents on PYRANA, a platform for building ' +
+      'governed AI agents whose knowledge is structured as Context Units ' +
+      '(CxUs) — atomic, content-addressable claims with attached supporting ' +
+      'context, lifecycle, and audit trail. The Cortex Context Engine is the ' +
+      'knowledge layer underneath PYRANA: papers and policies go in, CxUs ' +
+      'come out, and downstream agents read CxUs instead of raw text. The ' +
+      'podcast itself is an internal feedback loop — what landed in the daily ' +
+      'PYRANA Research Intelligence digest, what it means for the platform ' +
+      'roadmap, what we should be building or revisiting in response.',
   },
 
   // ─── Claude (script writing) ──────────────────────────────────────
