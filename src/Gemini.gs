@@ -114,17 +114,30 @@ function synthesizeChunk(apiKey, turns) {
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
               CONFIG.GEMINI.model + ':generateContent?key=' + encodeURIComponent(apiKey);
 
-  const response = UrlFetchApp.fetch(url, {
-    method: 'post',
-    contentType: 'application/json',
-    payload: JSON.stringify(body),
-    muteHttpExceptions: true,
-  });
-
-  const code = response.getResponseCode();
-  if (code !== 200) {
-    throw new Error('Gemini TTS error ' + code + ': ' +
-                    response.getContentText().slice(0, 800));
+  // Retry transient errors (5xx, 429). Gemini TTS occasionally returns
+  // 500 INTERNAL on otherwise-fine prompts, especially right after a
+  // billing/quota state change.
+  let response = null;
+  let code = 0;
+  const RETRY_DELAYS_MS = [2000, 5000, 10000];
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    response = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(body),
+      muteHttpExceptions: true,
+    });
+    code = response.getResponseCode();
+    if (code === 200) break;
+    const transient = (code >= 500 && code < 600) || code === 429;
+    if (!transient || attempt === RETRY_DELAYS_MS.length) {
+      throw new Error('Gemini TTS error ' + code + ': ' +
+                      response.getContentText().slice(0, 800));
+    }
+    Logger.log('    ⟳  Gemini ' + code + ', retrying in ' +
+               (RETRY_DELAYS_MS[attempt] / 1000) + 's (attempt ' +
+               (attempt + 1) + '/' + RETRY_DELAYS_MS.length + ')');
+    Utilities.sleep(RETRY_DELAYS_MS[attempt]);
   }
 
   const data = JSON.parse(response.getContentText());
