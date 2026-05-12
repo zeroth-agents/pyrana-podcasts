@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 12 May 2026 16:05:19 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 16:32:38 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — April 30, 2026]]></title>
+      <description><![CDATA[Quick programming note before we get into it — today's episode is going to be different. We owe you an honest conversation about what happened with our prep. Yeah, so normally on a Thursday we'd come in with six papers, mechanisms walked through, numbers on the table. Today we have a problem. The source pull broke. Walk me through what you mean by broke, because I think the listener deserves the f]]></description>
+      <pubDate>Thu, 30 Apr 2026 12:46:05 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_30_2026_v2.mp3" length="5164800" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_30_2026_v2.mp3</guid>
+      <itunes:duration>805</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 29, 2026]]></title>
       <description><![CDATA[Welcome back to PYRANA Daily. It's April 29th, 2026, and today we've got four papers that, taken together, basically sketch out what a serious agent stack looks like in 2026 — orchestration, memory, governance, and a real regulated deployment. The one I want to lead with: a framework called OxyGent that tries to collapse agents, tools, LLM calls, and entire reasoning flows into one interchangeable]]></description>
@@ -52,15 +61,6 @@
       <pubDate>Fri, 08 May 2026 12:50:18 GMT</pubDate>
       <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_8_2026.mp3" length="5056590" type="audio/mpeg"/>
       <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_8_2026.mp3</guid>
-      <itunes:duration>306</itunes:duration>
-      <itunes:explicit>false</itunes:explicit>
-    </item>
-    <item>
-      <title><![CDATA[PYRANA Research Intelligence — April 30, 2026]]></title>
-      <description><![CDATA[Okay so imagine you're an AI agent, and every time you face a new situation, you can dynamically reach into a toolkit and assemble exactly the right skills on the fly. That's the core idea behind a paper called Bian Que, and honestly it might be the most practically useful thing we've read all week. Bian Que, named after the legendary Chinese physician by the way, and the metaphor actually works —]]></description>
-      <pubDate>Thu, 30 Apr 2026 12:46:05 GMT</pubDate>
-      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_30_2026.mp3" length="5179430" type="audio/mpeg"/>
-      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_30_2026.mp3</guid>
       <itunes:duration>306</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
