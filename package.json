@@ -9,7 +9,7 @@
     "logs": "clasp logs --watch"
   },
   "devDependencies": {
-    "@google/clasp": "^2.4.2",
+    "@google/clasp": "^3.2.0",
     "lamejs": "^1.2.1"
   }
 }
