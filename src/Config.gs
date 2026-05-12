@@ -58,8 +58,8 @@ const CONFIG = {
   CLAUDE: {
     researchModel: 'claude-sonnet-4-6',
     scriptModel: 'claude-opus-4-7',
-    researchMaxTokens: 16000,
-    scriptMaxTokens: 24000,
+    researchMaxTokens: 8000,
+    scriptMaxTokens: 16000,
     targetMinutes: 15,
     // Floor the script length so Opus doesn't wrap up early when the
     // soft target is "~N minutes". 150 wpm × minutes × 0.85 floor.

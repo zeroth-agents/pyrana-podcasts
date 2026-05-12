@@ -15,8 +15,11 @@
 
 // Keep total source material under this many chars so we don't blow
 // past Claude's context or the Apps Script 6-min trigger window.
-const PAPERS_MAX_PER_PAPER_CHARS = 30000;
-const PAPERS_MAX_TOTAL_CHARS = 120000;
+// 18k chars/paper ≈ 4.5k words ≈ a full paper intro/method/results section.
+// 72k total keeps the Sonnet research pass under ~20k input tokens, which
+// returns in well under the UrlFetchApp ceiling (60s typical, 5 min hard cap).
+const PAPERS_MAX_PER_PAPER_CHARS = 18000;
+const PAPERS_MAX_TOTAL_CHARS = 72000;
 const PAPERS_MAX_COUNT = 8;
 const PAPERS_FETCH_TIMEOUT_MS = 15000;
 
