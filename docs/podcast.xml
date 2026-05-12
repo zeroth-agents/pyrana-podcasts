@@ -18,14 +18,14 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 12 May 2026 15:19:35 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 15:23:14 GMT</lastBuildDate>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 27, 2026]]></title>
-      <description><![CDATA[Okay, here's the number that stopped me cold this morning. A new memory system called Memanto hits 89.8% on LongMemEval and 87.1% on LoCoMo — those are the two big long-horizon memory benchmarks — and it does it with a single retrieval query, sub-90 millisecond latency, and zero ingestion delay. No knowledge graph. No multi-query pipeline. Just a typed schema and a vector engine. Right, and the "n]]></description>
+      <description><![CDATA[Okay, so if you've been paying what people are starting to call the memory tax — you know, the multi-second ingestion latency every time your agent writes something to its long-term store — there's a paper today that basically says: you don't have to. Yeah, this is the Memanto paper from Abtahi and colleagues, and the headline number is wild. 89.8% on LongMemEval, 87.1% on LoCoMo, sub-90 milliseco]]></description>
       <pubDate>Mon, 27 Apr 2026 12:43:32 GMT</pubDate>
-      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_27_2026_v2.mp3" length="5934336" type="audio/mpeg"/>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_27_2026_v2.mp3" length="6562368" type="audio/mpeg"/>
       <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_27_2026_v2.mp3</guid>
-      <itunes:duration>800</itunes:duration>
+      <itunes:duration>852</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
     <item>
