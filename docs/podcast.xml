@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 12 May 2026 15:23:14 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 15:51:58 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — April 28, 2026]]></title>
+      <description><![CDATA[Okay, so if you only remember one thing from today's episode, remember this phrase: Attention Latch. There's a paper out today that names a failure mode I think a lot of you have been hitting in production without knowing what to call it. Your agent anchors on a constraint from turn three of a fifty-turn conversation, the user updates the requirement at turn twenty, and the agent just… keeps optim]]></description>
+      <pubDate>Tue, 28 Apr 2026 11:27:33 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_28_2026_v2.mp3" length="5880960" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_28_2026_v2.mp3</guid>
+      <itunes:duration>848</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — April 27, 2026]]></title>
       <description><![CDATA[Okay, so if you've been paying what people are starting to call the memory tax — you know, the multi-second ingestion latency every time your agent writes something to its long-term store — there's a paper today that basically says: you don't have to. Yeah, this is the Memanto paper from Abtahi and colleagues, and the headline number is wild. 89.8% on LongMemEval, 87.1% on LoCoMo, sub-90 milliseco]]></description>
@@ -44,15 +53,6 @@
       <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_29_2026.mp3" length="5425893" type="audio/mpeg"/>
       <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_29_2026.mp3</guid>
       <itunes:duration>324</itunes:duration>
-      <itunes:explicit>false</itunes:explicit>
-    </item>
-    <item>
-      <title><![CDATA[PYRANA Research Intelligence — April 28, 2026]]></title>
-      <description><![CDATA[Okay, picture this — a multi-agent system specifically designed to generate real-world evidence from clinical data, built on a standardized medical data model, and it scores an 8.4 out of 10 on our internal relevance tracker. That's our lead today, and honestly it might be the most practically important paper we've covered this month. FastOMOP. And for listeners who aren't deep in the pharma data ]]></description>
-      <pubDate>Tue, 28 Apr 2026 11:27:33 GMT</pubDate>
-      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_April_28_2026.mp3" length="5831579" type="audio/mpeg"/>
-      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_April_28_2026.mp3</guid>
-      <itunes:duration>348</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
     <item>
