@@ -18,7 +18,16 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 12 May 2026 16:46:29 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 13 May 2026 04:19:14 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 12, 2026]]></title>
+      <description><![CDATA[Cold open. If you're building agents this quarter and you only remember one number from today's batch, make it this: Shepherd, out of Stanford and Northeastern, gets you a 5× faster process-plus-filesystem fork than docker commit on a 5.8 gigabyte image, with over 95% prompt-cache reuse on replay. And that's not a microbenchmark flex — they ride it into a live supervision jump from 28.8 to 54.7% j]]></description>
+      <pubDate>Wed, 13 May 2026 03:14:56 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_12_2026.mp3" length="6438720" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_12_2026.mp3</guid>
+      <itunes:duration>867</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 8, 2026]]></title>
       <description><![CDATA[Okay, here's the thing that got me out of my chair this morning. A paper landed today claiming a three-strategy retrieval architecture where the top tier is Text2Cypher — natural language straight into a graph query — and PYRANA's own digest scored it 8.05 out of 10, the highest of the day. The framing is literally "superintelligent retrieval agent." Now, we don't have benchmark numbers — we only ]]></description>
