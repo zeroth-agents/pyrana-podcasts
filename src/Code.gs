@@ -68,13 +68,16 @@ function processSingleEmail(msg) {
   Logger.log('  → ' + scriptTurns.length + ' dialogue turns, ' +
              scriptTurns.reduce(function (n, t) { return n + t.text.length; }, 0) + ' chars');
 
+  const showNotes = generateShowNotes(subject, scriptTurns, papers);
+  Logger.log('  → ' + showNotes.length + ' chars of show notes');
+
   Logger.log('  🎙️  Synthesizing audio (Gemini multi-speaker)...');
   const pcm = synthesizeEpisode(scriptTurns);
   Logger.log('  🎚️  Encoding MP3...');
   const audioBlob = encodePcmToMp3(pcm);
   Logger.log('  → ' + Math.round(audioBlob.getBytes().length / 1024) + ' KB');
 
-  publishEpisode(audioBlob, subject, date, scriptTurns);
+  publishEpisode(audioBlob, subject, date, scriptTurns, showNotes);
 
   Logger.log('  ✅ Published: ' + subject);
 }
@@ -162,6 +165,8 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
   const result = generatePodcastScript(subject, body, papers);
   const scriptTurns = result.turns;
 
+  const showNotes = generateShowNotes(subject, scriptTurns, papers);
+
   const pcm = synthesizeEpisode(scriptTurns);
   const audioBlob = encodePcmToMp3(pcm);
 
@@ -169,8 +174,10 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
   Logger.log('  ⬆️  Committing v2 MP3...');
   githubPutFile(audioPath, audioBlob.getBytes(), 'episode: ' + subject + ' (v2)');
 
-  Logger.log('  📝 Committing transcript...');
-  publishTranscript(scriptTurns, newFilename.replace(/\.mp3$/, ''), subject + ' (v2)');
+  Logger.log('  📝 Committing transcript + show notes...');
+  const basenameNoExt = newFilename.replace(/\.mp3$/, '');
+  publishTranscript(scriptTurns, basenameNoExt, subject + ' (v2)');
+  publishShowNotes(showNotes, basenameNoExt, subject + ' (v2)');
 
   const audioInfo = {
     name: newFilename,
@@ -182,7 +189,7 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
   };
 
   Logger.log('  📡 Replacing feed entry (drop old, add v2)...');
-  replaceFeedEntry(audioInfo, scriptTurns, oldFilename);
+  replaceFeedEntry(audioInfo, scriptTurns, oldFilename, showNotes);
 
   Logger.log('  ✅ Republished: ' + subject);
 }
@@ -192,7 +199,7 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
  * matches the legacy oldFilename, so the v1 episode is gone from the
  * feed entirely.
  */
-function replaceFeedEntry(audioInfo, scriptTurns, oldFilename) {
+function replaceFeedEntry(audioInfo, scriptTurns, oldFilename, showNotes) {
   const rssPath = CONFIG.GITHUB.publishDir + '/podcast.xml';
   const existingFile = githubGetFile(rssPath);
   const existingXml = existingFile ? existingFile.content : '';
@@ -203,11 +210,9 @@ function replaceFeedEntry(audioInfo, scriptTurns, oldFilename) {
     return e.guid !== oldGuid && e.guid !== audioInfo.guid;
   });
 
-  const previewText = scriptTurns
-    .slice(0, 3)
-    .map(function (t) { return t.text; })
-    .join(' ')
-    .slice(0, 400);
+  const description = showNotes && showNotes.length
+    ? showNotes
+    : scriptTurns.slice(0, 3).map(function (t) { return t.text; }).join(' ').slice(0, 400);
 
   cleaned.unshift({
     title: audioInfo.subject,
@@ -215,7 +220,7 @@ function replaceFeedEntry(audioInfo, scriptTurns, oldFilename) {
     audioUrl: audioInfo.url,
     audioSize: audioInfo.size,
     guid: audioInfo.guid,
-    description: previewText,
+    description: description,
     durationSec: estimateDuration(scriptTurns),
   });
 

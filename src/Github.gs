@@ -9,9 +9,10 @@
  * Required Config:  CONFIG.GITHUB.{owner,repo,branch,publishDir,pagesBaseUrl}
  */
 
-function publishEpisode(audioBlob, subject, date, scriptTurns) {
+function publishEpisode(audioBlob, subject, date, scriptTurns, showNotes) {
   const filename = sanitizeFilename(subject) + '.mp3';
   const audioPath = CONFIG.GITHUB.publishDir + '/episodes/' + filename;
+  const basename = sanitizeFilename(subject);
 
   Logger.log('  ⬆️  Committing MP3 to GitHub...');
   const audioCommit = githubPutFile(
@@ -21,8 +22,9 @@ function publishEpisode(audioBlob, subject, date, scriptTurns) {
   );
   Logger.log('  → ' + audioCommit.commit.sha.slice(0, 7));
 
-  Logger.log('  📝 Committing transcript...');
-  publishTranscript(scriptTurns, sanitizeFilename(subject), subject);
+  Logger.log('  📝 Committing transcript + show notes...');
+  publishTranscript(scriptTurns, basename, subject);
+  if (showNotes) publishShowNotes(showNotes, basename, subject);
 
   const audioUrl = CONFIG.GITHUB.pagesBaseUrl + '/episodes/' + encodeURIComponent(filename);
   const audioInfo = {
@@ -35,7 +37,7 @@ function publishEpisode(audioBlob, subject, date, scriptTurns) {
   };
 
   Logger.log('  📡 Updating RSS feed...');
-  updateRssFeed(audioInfo, scriptTurns);
+  updateRssFeed(audioInfo, scriptTurns, showNotes);
 
   return audioInfo;
 }
@@ -55,7 +57,17 @@ function publishTranscript(scriptTurns, basename, subject) {
   githubPutFile(path, bytes, 'transcript: ' + subject);
 }
 
-function updateRssFeed(audioInfo, scriptTurns) {
+/**
+ * Commit the HTML show notes used in the RSS <description> so a human
+ * (or future prompt-tuning) can review what listeners see in Spotify.
+ */
+function publishShowNotes(html, basename, subject) {
+  const path = CONFIG.GITHUB.publishDir + '/episodes/transcripts/' + basename + '.show-notes.html';
+  const bytes = Utilities.newBlob(html).getBytes();
+  githubPutFile(path, bytes, 'show notes: ' + subject);
+}
+
+function updateRssFeed(audioInfo, scriptTurns, showNotes) {
   const rssPath = CONFIG.GITHUB.publishDir + '/podcast.xml';
   const existingFile = githubGetFile(rssPath);
   const existingXml = existingFile ? existingFile.content : '';
@@ -66,11 +78,9 @@ function updateRssFeed(audioInfo, scriptTurns) {
     return;
   }
 
-  const previewText = scriptTurns
-    .slice(0, 3)
-    .map(function (t) { return t.text; })
-    .join(' ')
-    .slice(0, 400);
+  const description = showNotes && showNotes.length
+    ? showNotes
+    : scriptTurns.slice(0, 3).map(function (t) { return t.text; }).join(' ').slice(0, 400);
 
   existing.unshift({
     title: audioInfo.subject,
@@ -78,7 +88,7 @@ function updateRssFeed(audioInfo, scriptTurns) {
     audioUrl: audioInfo.url,
     audioSize: audioInfo.size,
     guid: audioInfo.guid,
-    description: previewText,
+    description: description,
     durationSec: estimateDuration(scriptTurns),
   });
 

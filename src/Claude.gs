@@ -145,11 +145,29 @@ function generatePodcastScript(subject, emailBody, papers) {
     'podcast made by the Zeroth Agents team for an internal builder audience.\n\n' +
     (buildContext ? 'CONTEXT — what "we" are building:\n' + buildContext + '\n\n' : '') +
     'Two hosts trade lines:\n' +
-    '  HOST_A — warm, curious. Asks great questions. Occasionally summarizes ' +
-    'for the listener and connects ideas across papers.\n' +
-    '  HOST_B — deep technical chops. Sharp, specific opinions. Names mechanisms, ' +
-    'cites numbers, draws comparisons to prior work. Will push back when ' +
-    'something doesn\'t add up.\n\n' +
+    '  HOST_A — warm, curious. Asks great questions on behalf of the listener. ' +
+    'Frequently summarizes, asks for plain-English re-explanations, and connects ' +
+    'ideas across papers. When HOST_B uses jargon, HOST_A is the one who says ' +
+    '"wait, back up — what does that actually mean?"\n' +
+    '  HOST_B — deep technical knowledge but explains everything like a great ' +
+    'teacher. Sharp, specific opinions. Names mechanisms and cites numbers, but ' +
+    'always grounds them in plain English and analogies before getting deep. ' +
+    'Will push back when something doesn\'t add up.\n\n' +
+    'ACCESSIBILITY — read this carefully.\n' +
+    'These episodes were getting too technical too quickly. The audience is ' +
+    'smart but not specialists in every AI subfield. Rules:\n' +
+    '  • Assume high-school level baseline. If you use a term beyond that ' +
+    '(MoE, RLHF, MLA, RAG, KV-cache, distillation, LoRA, FlashAttention, ' +
+    'mixture-of-experts, etc.), explain it in one sentence the FIRST time it ' +
+    'appears in the episode. Best pattern: HOST_A asks for the plain version, ' +
+    'HOST_B gives it.\n' +
+    '  • Lead with the human-readable "what does this mean" BEFORE the mechanism. ' +
+    '"This paper makes models 3x cheaper to run by changing how they remember ' +
+    'context across long conversations" → THEN you can get into how it works.\n' +
+    '  • Analogies welcome. "Think of it like a librarian who keeps a small ' +
+    'cache of frequently-asked questions instead of re-reading the shelves every ' +
+    'time" beats "they use a learned key-value approximation."\n' +
+    '  • Don\'t gatekeep. Builder context is good; jargon density is not.\n\n' +
     'Both hosts are part of the PYRANA team. They speak in first-person plural ' +
     '("our Cortex agents," "what we\'re building," "how we handle CxUs today") ' +
     'when connecting papers back to the platform. This isn\'t outsider commentary ' +
@@ -174,25 +192,37 @@ function generatePodcastScript(subject, emailBody, papers) {
     'a deeper comparison to prior work. Do NOT pad with filler ("yeah", ' +
     '"totally", recap loops) — add real substance from the notes.\n\n' +
     'Structure (rough budget for a ' + targetMinutes + '-min episode):\n' +
-    '  1. Cold open (~45s, ~110 words): hook on the single most interesting ' +
-    'result. Specific, not vague. "X went from 40% to 73% on benchmark Y" ' +
-    'beats "big jump in performance."\n' +
+    '  1. EXTENDED COLD OPEN (~90-120s, ~250 words). Two beats:\n' +
+    '       (a) The day\'s theme — what links the papers in this batch, in ' +
+    'one human sentence. "Today is mostly about making retrieval cheaper" or ' +
+    '"Three papers on getting agents to plan further ahead."\n' +
+    '       (b) Why we care for PYRANA/Cortex — concrete, not vague. "Two of ' +
+    'these directly affect how we should be storing CxUs" or "The middle paper ' +
+    'is the thing we\'ve been waiting for to make our retrieval pipeline 3x ' +
+    'cheaper." Name the part of the platform.\n' +
+    '       Then set up what\'s coming — "we\'ll walk through them, then come ' +
+    'back to what we should actually do about it." DO NOT dive into mechanism ' +
+    'in the cold open. Stay readable.\n' +
     '  2. Walk through the papers, one at a time. Each paper deserves roughly ' +
-    '3 minutes (~450 words) of dialogue covering:\n' +
-    '       • The actual claim, with numbers\n' +
-    '       • Mechanism walk-through — explain HOW it works, not just label it. ' +
-    'Two or three back-and-forth turns minimum on the mechanism alone.\n' +
-    '       • The steel-manned objection. HOST_B voices it; HOST_A pushes ' +
-    'back or concedes. Real disagreement is fine and welcome.\n' +
-    '       • Why a builder should care this quarter — concrete, not generic.\n' +
-    '  3. PYRANA/Cortex implications segment (~120s, ~300 words): what does ' +
-    'today\'s batch mean for what *we* are building? Cite the "Connection to ' +
-    'PYRANA/Cortex" and "Builder takeaway" lines from the notes. Specific is ' +
-    'better than vague — name the part of the platform (CxU extraction, agent ' +
-    'retrieval, Cortex governance, etc.) and what should change as a result. ' +
-    'This is where the episode earns its place vs just reading the digest.\n' +
-    '  4. Field connections segment (~60s, ~150 words): what wider trend is ' +
-    'forming across these papers? Name related external work explicitly.\n' +
+    '3 minutes (~450 words). For each paper, IN THIS ORDER:\n' +
+    '       (a) Plain-English summary first (~60s): "This paper shows X by ' +
+    'doing Y, and the headline result is Z." No jargon yet. The listener ' +
+    'should understand what the paper is even if they tune out the next part.\n' +
+    '       (b) Mechanism walk-through (~90s): NOW you can get into how it ' +
+    'works. Two or three back-and-forth turns. HOST_A asks "explain that like ' +
+    'I\'m new to this" if HOST_B uses a term that hasn\'t been unpacked yet. ' +
+    'Lean on analogies.\n' +
+    '       (c) Steel-manned objection (~30s): HOST_B raises it; HOST_A pushes ' +
+    'back or concedes. Honest disagreement welcome.\n' +
+    '       (d) Builder takeaway (~30s): What does this change for PYRANA/' +
+    'Cortex this quarter — concrete, not generic.\n' +
+    '  3. PYRANA/Cortex implications segment (~90s, ~225 words): pull the ' +
+    'threads together. Cite the "Connection to PYRANA/Cortex" lines from the ' +
+    'notes. Name the part of the platform — CxU extraction, agent retrieval, ' +
+    'Cortex governance, etc. — and what should change. This is where the ' +
+    'episode earns its place vs. just reading the digest.\n' +
+    '  4. Field connections segment (~45s, ~110 words): wider trend forming ' +
+    'across these papers. Name related external work explicitly.\n' +
     '  5. Sign-off (~20s): one or two sentences teasing what to watch for ' +
     'tomorrow.\n\n' +
     'Voice and texture:\n' +
@@ -260,4 +290,90 @@ function cleanLine(text) {
     .replace(/_([^_]+)_/g, '$1')
     .replace(/`([^`]+)`/g, '$1')
     .trim();
+}
+
+/**
+ * Pass 3 — show notes. Short HTML for the RSS <description> field
+ * (also persisted alongside the transcript). Spotify/Apple render basic
+ * HTML in show notes; we keep tags simple: p, ul, li, a, strong.
+ *
+ * Inputs:
+ *   subject     — email subject (becomes episode title)
+ *   scriptTurns — parsed dialogue, for episode summary
+ *   papers      — [{url, title, text}] from fetchAllPapers; URLs link out
+ */
+function generateShowNotes(subject, scriptTurns, papers) {
+  Logger.log('  📝 Show-notes pass...');
+  const buildContext = CONFIG.PODCAST.buildContext || '';
+
+  // Compact transcript for the prompt — first ~3000 chars is plenty to
+  // capture the cold open and a paper or two; summary doesn't need the
+  // whole script.
+  const scriptText = scriptTurns
+    .map(function (t) { return 'HOST_' + t.speaker + ': ' + t.text; })
+    .join('\n')
+    .slice(0, 6000);
+
+  const papersBlock = (papers && papers.length)
+    ? papers.map(function (p, i) {
+        return '[' + (i + 1) + '] ' + p.title + '\n    ' + p.url;
+      }).join('\n')
+    : '(no papers fetched)';
+
+  const system =
+    'You write the show notes for "' + CONFIG.PODCAST.title + '", a daily AI ' +
+    'research podcast.\n\n' +
+    (buildContext ? 'CONTEXT — what "we" build:\n' + buildContext + '\n\n' : '') +
+    'Your job: produce concise HTML show notes for this episode. Output ' +
+    'PLAIN HTML — no markdown, no preamble, no closing remarks, no <html>/' +
+    '<body> tags. Only these elements are allowed: <p>, <strong>, <em>, ' +
+    '<a href="...">, <ul>, <li>.\n\n' +
+    'Required structure, in this order:\n' +
+    '  1. Two short paragraphs (<p>...</p>). First paragraph: the episode\'s ' +
+    'theme in plain English — what the papers have in common, what the ' +
+    'listener will learn. Second paragraph: why it matters for PYRANA/Cortex ' +
+    'specifically. Concrete, not vague.\n' +
+    '  2. <p><strong>Papers covered:</strong></p> followed by a <ul> with one ' +
+    '<li> per paper. Each list item: <a href="URL">Paper title</a> — one-line ' +
+    'plain-English summary (max ~20 words). Only include papers that were ' +
+    'actually discussed in the script — if a fetched paper wasn\'t covered, ' +
+    'leave it out.\n' +
+    '  3. <p><strong>Takeaways for our platform:</strong></p> followed by a ' +
+    '<ul> with 2-3 <li> bullets. Each bullet: a specific implication for ' +
+    'PYRANA, Cortex, CxU extraction, agent retrieval, or governance. Concrete ' +
+    'ideally with a verb ("Audit our CxU chunking against the X result," ' +
+    '"Consider Y for our next retrieval iteration"). Generic platitudes are ' +
+    'banned.\n\n' +
+    'Total length target: 250-400 words. Under 2500 characters total. ' +
+    'No emojis. No "in this episode" filler. Start directly with the first <p>.';
+
+  const user =
+    '── Episode subject ──\n' + subject + '\n\n' +
+    '── Papers available (with URLs) ──\n' + papersBlock + '\n\n' +
+    '── Script excerpt ──\n' + scriptText + '\n\n' +
+    'Write the show-notes HTML now.';
+
+  const raw = callClaude(
+    CONFIG.CLAUDE.researchModel,    // Sonnet is plenty for this
+    1500,
+    system,
+    user
+  );
+
+  return cleanShowNotesHtml(raw);
+}
+
+/**
+ * Strip stray code fences and the kind of preamble Claude sometimes
+ * adds despite instruction. Keep only the HTML body.
+ */
+function cleanShowNotesHtml(raw) {
+  let s = raw.trim();
+  // Strip leading code-fence markers.
+  s = s.replace(/^```(?:html)?\s*/i, '').replace(/```\s*$/i, '');
+  // If the model leads with prose before the first tag, drop everything
+  // before the first <p>.
+  const firstTag = s.indexOf('<p');
+  if (firstTag > 0) s = s.slice(firstTag);
+  return s.trim();
 }
