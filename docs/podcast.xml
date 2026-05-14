@@ -18,7 +18,33 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Wed, 13 May 2026 04:19:14 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 14 May 2026 15:20:51 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 14, 2026]]></title>
+      <description><![CDATA[<p>Four papers land on the same axis: how to make agent reasoning auditable and reproducible when the underlying model is stochastic. The episode covers a multi-hop retrieval system that externalises reasoning as executable Python, a multi-agent patent framework that uses cross-methodology convergence to rank claims, a memory study showing that model-driven memory rewriting degrades accuracy over time, and a scientific-workflow paper making the empirical case for deterministic tool dispatch over generative code.</p>
+
+<p>Three of the four papers map directly onto active Cortex work. The PyRAG executable-reasoning pattern is a working prototype for the Text2Cypher pathway: emit a Python program, log its execution trace as a CxU provenance event, and every multi-hop query becomes a replayable artifact. The memory paper is a concrete warning against shipping <em>CORTEXLEARNINGENABLED</em> on by default — repeated LLM rewrites corrupt previously accurate knowledge. And the deterministic-mediation paper is the strongest empirical backing yet for the inproc-MCP tool design: typed tools beat generated code on reproducibility and error traceability.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.12975">Retrieval is Cheap, Show Me the Code: Executable Multi-Hop Reasoning for Retrieval-Augmented Generation</a> — Turns multi-hop RAG reasoning into executable Python programs, yielding +25.5 exact-match on Bamboogle with no fine-tuning.</li>
+  <li><a href="https://arxiv.org/abs/2605.13311">IdeaForge: A Knowledge Graph-Grounded Multi-Agent Framework for Cross-Methodology Innovation Analysis and Patent Claim Generation</a> — Multiple agents using distinct innovation frameworks write to a shared knowledge graph; convergent claims are ranked higher for patent drafting.</li>
+  <li><a href="https://arxiv.org/abs/2605.12978">Useful Memories Become Faulty When Continuously Updated by LLMs</a> — Continuous LLM-driven memory rewriting degrades accuracy of previously correct knowledge over successive updates.</li>
+  <li><a href="https://arxiv.org/abs/2605.13245">It's not the Language Model, it's the Tool: Deterministic Mediation for Scientific Workflows</a> — Replacing generative code with typed, deterministic tool selection improves reproducibility and error traceability in scientific agent workflows.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Wire the PyRAG Plan Agent pattern into the Text2Cypher pathway so multi-hop queries emit a Python execution trace logged as a CxU provenance event — this delivers the replayable audit trail the governed-agent story requires. Add a complexity router so single-hop lookups bypass program-synthesis overhead entirely.</li>
+  <li>Gate <em>CORTEXLEARNINGENABLED</em> to off-by-default and require explicit versioned checkpoints before any model-driven CxU rewrite is committed; the memory paper shows that incremental rewrites silently corrupt accurate claims without triggering obvious failure signals.</li>
+  <li>Use IdeaForge's convergence-tagging pattern as a reference architecture for the regulated-tenant demo: when multiple CxU extraction agents independently surface the same claim from different source types, promote that claim's confidence score and surface the agreement count in the audit trail.</li>
+</ul>]]></description>
+      <pubDate>Thu, 14 May 2026 14:19:03 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_14_2026.mp3" length="6847680" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_14_2026.mp3</guid>
+      <itunes:duration>932</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 12, 2026]]></title>
       <description><![CDATA[Cold open. If you're building agents this quarter and you only remember one number from today's batch, make it this: Shepherd, out of Stanford and Northeastern, gets you a 5× faster process-plus-filesystem fork than docker commit on a 5.8 gigabyte image, with over 95% prompt-cache reuse on replay. And that's not a microbenchmark flex — they ride it into a live supervision jump from 28.8 to 54.7% j]]></description>
