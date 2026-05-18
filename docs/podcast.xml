@@ -18,7 +18,33 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Thu, 14 May 2026 15:20:51 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2026 13:21:25 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 18, 2026]]></title>
+      <description><![CDATA[<p>Today's four papers share a common thread: the infrastructure beneath AI agents — how context gets selected, how tools get defined, how actions get authorized, and how prompts drift in production — is quietly responsible for most real-world failure. None of these papers are about bigger models. They are about fixing the plumbing that determines whether the models you already have actually work reliably in enterprise environments.</p>
+
+<p>For PYRANA and the Cortex Context Engine, the implications land at specific layers. X-SYNTH directly challenges the similarity-first assumption underneath CxU extraction. SkillSmith indicts how tool boundaries are expressed at runtime. The DTF authorization model maps almost directly onto the regulated-tenant audit story we keep fielding in pharma. And PRISM names the silent prompt-drift problem we have no current instrumentation for when LiteLLM rotates models under us.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.15505">X-SYNTH: Beyond Retrieval — Enterprise Context Synthesis from Observed Human Attention</a> — Behavioral attention signals, not content similarity, drive a 6.5x improvement in surfacing what actually matters to a specific user.</li>
+<li><a href="https://arxiv.org/abs/2605.15228">Verifiable Agentic Infrastructure: Proof-Derived Authorization for Sovereign AI Systems</a> — Agent actions should be authorized by verifiable per-action justification proofs, not ambient credential scopes.</li>
+<li><a href="https://arxiv.org/abs/2605.15215">SkillSmith: Compiling Agent Skills into Boundary-Guided Runtime Interfaces</a> — Poorly defined tool boundaries waste roughly half the runtime token budget; compile-time boundary guidance recovers it.</li>
+<li><a href="https://arxiv.org/abs/2605.15665">PRISM: Prompt Reliability via Iterative Simulation and Monitoring for Enterprise Conversational AI</a> — Iterative simulation detects silent prompt degradation before it surfaces as user-visible failures in production.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+<li>Pilot a lightweight Digital Twin Signature — dwell time and revisit counts from the demo-2 financial frontend — as an optional salience weight in <em>context_engine.extract</em>, and measure whether it shifts CxU ranking before committing to the full seven-filter X-SYNTH architecture.</li>
+<li>Model the DTF Evidence Chain against PYRANA's existing CxU audit trail: each high-stakes agent mutation should bind a structured justification proof to the CxU snapshot it acted on, making the full decision sequence replayable for regulated tenants.</li>
+<li>Stand up a PRISM-style simulation harness against our top ten production prompt templates and trigger re-evaluation automatically whenever LiteLLM reports a model-version rotation, closing the silent-drift gap.</li>
+</ul>]]></description>
+      <pubDate>Mon, 18 May 2026 12:55:23 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_18_2026.mp3" length="5862144" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_18_2026.mp3</guid>
+      <itunes:duration>873</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 14, 2026]]></title>
       <description><![CDATA[<p>Four papers land on the same axis: how to make agent reasoning auditable and reproducible when the underlying model is stochastic. The episode covers a multi-hop retrieval system that externalises reasoning as executable Python, a multi-agent patent framework that uses cross-methodology convergence to rank claims, a memory study showing that model-driven memory rewriting degrades accuracy over time, and a scientific-workflow paper making the empirical case for deterministic tool dispatch over generative code.</p>
