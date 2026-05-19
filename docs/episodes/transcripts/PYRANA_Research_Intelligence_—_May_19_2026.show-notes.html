@@ -1,0 +1,18 @@
+<p>Four papers, one argument: agents degrade when forced to derive structure from raw text at inference time. This episode traces that thesis across site reliability engineering, governance enforcement, hallucination reduction, and scientific simulation — each paper adding empirical weight to the same underlying claim that pre-structured knowledge is not a convenience, it is a performance multiplier.</p>
+
+<p>For PYRANA and the Cortex Context Engine, the numbers are unusually specific. Causely measures the cost of unstructured context as 60% more tokens and 78% more tool calls. KISS shows agents plateau below 40% success without a knowledge scaffold and reach 84% with one. EHV argues policy enforcement belongs inside the inference loop, not in post-hoc audit logs. TRACE shows a model's own internal activations can catch hallucinations before they surface. All four map onto active roadmap questions: CxU schema design, causal subtyping, governance placement in PlannerDelegatorWorkflow, and retrieval fallback logic.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.18327">Causely: A Causal Intelligence Layer Reliability Workflows Benchmark Study on AI SRE and Reliability Workflows</a> — Pre-built causal knowledge graphs cut agent token spend 60% and tool calls 78% while lifting root-cause accuracy to 100% on a controlled SRE benchmark.</li>
+  <li><a href="https://arxiv.org/abs/2605.17909">Ethical Hyper-Velocity (EHV): A Provably Deterministic Governance-Aware JIT Compiler Architecture for Agentic Systems</a> — Embeds policy enforcement inside the inference loop using CRDTs and TEEs, verified across 1,738 states with zero safety violations in TLA+ model checking.</li>
+  <li><a href="https://arxiv.org/abs/2605.18163">TRACE: Trajectory Correction from Cross-layer Evidence for Hallucination Reduction</a> — Reads cross-layer internal activations during the forward pass to detect and correct hallucinations before the model produces output.</li>
+  <li><a href="https://arxiv.org/abs/2605.17856">KISS – Knowledge Infrastructure for Scientific Simulation: A Scaffolding for Agentic Earth Science</a> — Across 3,000 trials, agents with a structured knowledge scaffold reached 84% task success versus below 40% without one.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Prototype a causal CxU subtype carrying typed edges — entity, symptom, root cause, probability — and wire RetrievalAgent to query that subgraph first before falling back to vector search; benchmark token spend and tool calls against the current pipeline to produce a concrete procurement number.</li>
+  <li>Evaluate moving PYRANA's governance checks from post-execution audit into the agent action-generation step, using EHV's CRDT-plus-epoch-cache pattern as the reference architecture for sub-millisecond policy validation inside PlannerDelegatorWorkflow.</li>
+  <li>Audit whether Cortex CxU extraction preserves the procedural and dependency structure KISS identifies as critical — flat claim extraction likely discards the scaffold that drives the 40%-to-84% success gap agents depend on at retrieval time.</li>
+</ul>
