@@ -75,3 +75,36 @@ considering the Task API later for deeper comparison.
   is risky inside the 6-min window.
 - **Account needed.** Requires a Parallel.ai account / API key (you'll provide);
   the rest can be wired up against the REST API.
+
+## Variable episode length (15-min target, 30-min cap)
+
+**Goal.** Keep ~15 minutes as the *target*, but let richer days run longer — up
+to a **30-minute cap** — when the material warrants it. Some papers (or a denser
+batch) simply need more room than 15 minutes allows.
+
+**Where it lives.** `CONFIG.CLAUDE.targetMinutes` (currently `15`) drives the
+script pass in `src/Claude.gs`. Today the prompt builds a fixed
+`targetWords = targetMinutes * 150` and enforces a hard **minimum** word floor
+(`minWords`), so length is essentially pinned to the target with no headroom.
+
+**Changes:**
+
+- **Add a cap.** Introduce `CONFIG.CLAUDE.maxMinutes` (= `30`) alongside
+  `targetMinutes` (stays `15`). Derive a `maxWords` ceiling the same way
+  `targetWords` is derived (`maxMinutes * 150`).
+- **Make length adaptive, not fixed.** Rework the script-pass prompt so 15 min
+  is the default/target and the model is allowed to expand toward the 30-min cap
+  *only when the notes justify it* (more papers, deeper mechanisms, a meaty
+  steel-manned debate). Thin days should still come in around 15 — don't pad to
+  fill time. Keep a sensible floor so short episodes don't collapse.
+- **Per-paper budget scales.** The structure budget in the prompt is written for
+  a 15-min episode; let the per-paper segment time scale with the chosen length
+  rather than being hard-coded.
+
+**Watch-outs:**
+
+- **Apps Script 6-min cap.** A 30-min episode (~4500 words) means more Gemini
+  TTS chunks and more API round-trips. Confirm a max-length run still finishes
+  inside the 6-minute execution limit (see TTS chunking notes in `README.md`).
+- **Token ceiling.** Check `CONFIG.CLAUDE.scriptMaxTokens` (currently `16000`)
+  comfortably covers a 30-min script.
