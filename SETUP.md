@@ -119,13 +119,18 @@ Then `npx clasp open` to open it in the browser.
 
 Apps Script editor → **Project Settings (gear) → Script Properties → Add script property**.
 
-Add three properties:
+Add these properties:
 
 | Property name | Value |
 |---|---|
 | `ANTHROPIC_API_KEY` | `sk-ant-...` |
 | `GOOGLE_API_KEY` | your Gemini API key |
 | `GITHUB_TOKEN` | `github_pat_...` from step 4 |
+| `PARALLEL_API_KEY` | Parallel.ai key — optional; enables external paper comparison |
+
+`PARALLEL_API_KEY` is optional. Without it, the research pass still runs; it just
+skips the external best-of-breed comparison. To disable it without removing the
+key, set `CONFIG.PARALLEL.enabled = false` in `Config.gs`.
 
 Save.
 

@@ -61,6 +61,11 @@ function generateResearchNotes(subject, emailBody, papers) {
     'might affect the PYRANA/Cortex roadmap — so the "Connection" and "Builder ' +
     'takeaway" lines should be concrete about what it means for our work, not ' +
     'generic industry commentary.\n\n' +
+    'For some papers you are also given EXTERNAL web context (related work, ' +
+    'competing methods, benchmarks, commentary) gathered from a web search. Use ' +
+    'it to situate each paper against the rest of the field and call a ' +
+    'best-of-breed — this is how we decide what to build or revisit. Do not ' +
+    'fabricate comparisons that the external context does not support.\n\n' +
     'For each paper worth covering, output a block in this exact format:\n\n' +
     '=== PAPER ===\n' +
     'Title: <paper title>\n' +
@@ -84,7 +89,14 @@ function generateResearchNotes(subject, emailBody, papers) {
     'Cortex Context Engine itself, or the platform roadmap? If the digest email ' +
     'already framed PYRANA-relevance, lean into that framing here.>\n' +
     'Field connection: <one sentence linking to a recent paper, trend, or ' +
-    'standing debate in the wider field. Name names where relevant.>\n' +
+    'standing debate in the wider field. Name names where relevant. Ground this ' +
+    'in the external web context below when it is provided.>\n' +
+    'Comparative / best-of-breed: <2-3 sentences. Using the external web context ' +
+    'provided below, compare this paper against competing or alternative ' +
+    'approaches and the broader trend: how does it stack up, which approach looks ' +
+    'best-of-breed, and what does that imply for our roadmap (what to build or ' +
+    'revisit)? If no external context was provided for this paper, write ' +
+    '"no external comparison available" rather than inventing one.>\n' +
     'Builder takeaway: <one sentence. What should we do differently in PYRANA/' +
     'Cortex this quarter as a result of this paper?>\n' +
     '=== END ===\n\n' +
@@ -112,6 +124,11 @@ function generateResearchNotes(subject, emailBody, papers) {
   } else {
     user += '(No source papers were fetched. Work from the digest only and ' +
             'be honest about the resulting depth limits.)\n\n';
+  }
+
+  const externalContext = gatherParallelContext(papers);
+  if (externalContext) {
+    user += '─── External web context (Parallel) ───\n\n' + externalContext + '\n';
   }
 
   user += 'Write the research notes now.';
@@ -240,7 +257,10 @@ function generatePodcastScript(subject, emailBody, papers) {
     'Cortex governance, etc. — and what should change. This is where the ' +
     'episode earns its place vs. just reading the digest.\n' +
     '  4. Field connections segment (~45s, ~110 words): wider trend forming ' +
-    'across these papers. Name related external work explicitly.\n' +
+    'across these papers. Name related external work explicitly, and where the ' +
+    'notes give a "Comparative / best-of-breed" read, say how today\'s papers ' +
+    'stack up against the alternatives and what that means for what we should ' +
+    'build or revisit.\n' +
     '  5. Sign-off (~20s): one or two sentences teasing what to watch for ' +
     'tomorrow.\n\n' +
     'Voice and texture:\n' +

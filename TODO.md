@@ -40,7 +40,15 @@ Planned improvements for the PYRANA podcast pipeline.
 
 ## Compare papers to outside work via Parallel.ai (bigger)
 
-> Status: **deferred** — blocked on a Parallel.ai account / API key.
+> Status: **done** (pending real-run verification). Added `src/Parallel.gs`
+> (Search API client via `UrlFetchApp`, graceful degradation), a
+> `CONFIG.PARALLEL` block, and wired external context into the research pass
+> (`src/Claude.gs`): new "Comparative / best-of-breed" notes field + grounded
+> "Field connection". Needs `PARALLEL_API_KEY` in Script Properties (documented
+> in `SETUP.md`). NOT yet run live — `api.parallel.ai` is outside this
+> environment's network allowlist, so the response parsing is built to the
+> documented shape (`{ results: [{ url, title, publish_date, excerpts }] }`)
+> and verified only by reading. Confirm against a real episode.
 
 **Goal.** Right now we only compare each paper to PYRANA/Cortex (the
 "Connection to PYRANA/Cortex" line in the research pass). We don't compare a

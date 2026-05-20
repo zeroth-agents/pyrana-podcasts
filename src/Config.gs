@@ -7,6 +7,7 @@
  *   ANTHROPIC_API_KEY     — sk-ant-...
  *   GOOGLE_API_KEY        — Gemini API key (multi-speaker TTS)
  *   GITHUB_TOKEN          — fine-grained PAT, Contents: read+write on the host repo
+ *   PARALLEL_API_KEY      — Parallel.ai key (external paper comparison; optional)
  *
  * Everything below is non-secret tuning you can edit freely.
  */
@@ -104,5 +105,20 @@ const CONFIG = {
     styleA: 'a warm, curious tone with a neutral American accent',
     styleB: 'a crisp British accent and an authoritative, teacherly tone',
     sampleRate: 24000,  // Gemini TTS output rate (don't change)
+  },
+
+  // ─── Parallel.ai (external paper comparison) ──────────────────────
+  // Web search run during the research pass to compare each paper to
+  // outside work and the wider trend — a best-of-breed read that informs
+  // roadmap decisions. Set PARALLEL_API_KEY in Script Properties.
+  // Degrades gracefully: with no key or enabled=false, the research pass
+  // runs exactly as before. Each covered paper is one synchronous Search
+  // API call, so maxPapers bounds latency against the 6-min execution cap.
+  PARALLEL: {
+    enabled: true,
+    searchUrl: 'https://api.parallel.ai/v1/search',
+    maxResults: 5,            // results per paper query
+    maxCharsPerResult: 1200,  // excerpt char budget per result
+    maxPapers: 4,             // cap calls per episode (latency budget)
   },
 };
