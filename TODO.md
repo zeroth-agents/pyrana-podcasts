@@ -108,3 +108,40 @@ script pass in `src/Claude.gs`. Today the prompt builds a fixed
   inside the 6-minute execution limit (see TTS chunking notes in `README.md`).
 - **Token ceiling.** Check `CONFIG.CLAUDE.scriptMaxTokens` (currently `16000`)
   comfortably covers a 30-min script.
+
+## "Lite" episodes from shared links / forwarded email (back burner)
+
+> Low priority / back burner.
+
+**Goal.** A lighter-weight episode format alongside the full PYRANA research
+show. Instead of the two-pass deep research treatment, the hosts simply
+**comment on** a set of links — or even **read them verbatim** — for a quick,
+casual episode.
+
+**Two input sources:**
+
+1. **Links from the Zeroth Agents text thread.** Whatever links get dropped in
+   the team's group text thread become episode fodder.
+2. **Forwarded email / newsletter.** Forward an email or newsletter into the
+   pipeline and have the hosts do the same thing — comment on it or read it
+   verbatim.
+
+**How it differs from the main show:**
+
+- New, lighter Claude path (or prompt mode) in `src/Claude.gs` — skip the
+  research-notes pass; either a "react/comment on these links" prompt or a
+  near-verbatim read-through, depending on the item.
+- Reuses the existing link-fetching (`src/Papers.gs`) and the TTS + publish
+  path (`src/Gemini.gs`, `src/Audio.gs`, `src/Github.gs`, `src/RSS.gs`)
+  unchanged. Could publish to the same feed or a separate "Lite" feed.
+
+**Open question — ingestion path.** Apps Script reads **Gmail**, not SMS
+directly (`CONFIG.GMAIL_QUERY` in `src/Config.gs`, consumed by the main loop in
+`src/Code.gs`). Need to decide how a text thread reaches the pipeline:
+
+- The forwarded-email case is easy — add a second Gmail query (e.g. a label or a
+  dedicated forwarding address) and branch the main loop to the lite path.
+- The text-thread case needs a bridge: e.g. forward the thread to Gmail (Google
+  Voice / a forwarding number / a Shortcut that emails the links), then treat it
+  like any other inbound email. Figure out the simplest reliable bridge before
+  building.
