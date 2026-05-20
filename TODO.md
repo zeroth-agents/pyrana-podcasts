@@ -14,3 +14,16 @@ Planned improvements for the PYRANA podcast pipeline.
 - **Never let a host answer their own question.** A question raised by one host
   must be answered by another — never by the same speaker who asked it. Enforce
   this in the script-pass dialogue rules in `src/Claude.gs`.
+
+## Technical level & "plain English" tic
+
+- **Stop the hosts from literally saying "in plain English."** The script prompt
+  in `src/Claude.gs` instructs the hosts to explain things plainly (the phrase
+  "plain English" / "plain version" appears throughout the prompt). The model has
+  taken this too literally and the hosts repeatedly say the phrase out loud, which
+  comes across as pedantic.
+- **The actual goal is the right technical level.** Pitch the discussion so a
+  listener can follow along without having read the paper — explain at that level
+  by default, rather than narrating that they're about to simplify. Rework the
+  prompt so "plain English" describes the target register, not a phrase the hosts
+  announce.
