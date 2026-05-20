@@ -18,7 +18,33 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 19 May 2026 14:20:43 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 20 May 2026 13:21:35 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 20, 2026]]></title>
+      <description><![CDATA[<p>Today's four papers share a single anxiety: agent systems that quietly degrade as they scale. The episode traces two failure vectors — skill libraries that bloat and drift over time, and long-context agents that waste tokens re-orienting themselves on every turn — and examines the runtime primitives that could contain both problems. Listeners come away with concrete vocabulary for the "reasoning vs. bookkeeping" split and a clearer picture of where structured formalism pays off versus where it adds authoring cost.</p>
+
+<p>For PYRANA, the overlap is direct. The <strong>@tool</strong> catalog is exactly the skill library that Library Drift warns about, and the <strong>Formal Skill</strong> paper is effectively a draft spec for what a governed tool registration should look like — schema, executor, lifecycle hooks, state. Meanwhile, PEEK maps almost one-to-one onto <strong>MessageBuilder</strong>: the Distiller/Cartographer/Evictor architecture is a concrete blueprint for how accumulated CxU context should be summarized and pruned across agent turns rather than rebuilt from scratch each time.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.19604">Formal Skill: Programmable Runtime Skills for Efficient and Accurate LLM Agents</a> — Replace prose skill descriptions with schema-plus-executor objects; achieves competitive results with ~48% fewer tokens.</li>
+  <li><a href="https://arxiv.org/abs/2605.19932">PEEK: Context Map as an Orientation Cache for Long-Context LLM Agents</a> — Cache a compact, updatable orientation map so agents stop re-deriving context state on every turn.</li>
+  <li><a href="https://arxiv.org/abs/2605.20173">A Methodology for Selecting and Composing Runtime Architecture Patterns for Production LLM Agents</a> — Provides principled vocabulary and selection criteria for agent runtime architectural primitives.</li>
+  <li><a href="https://arxiv.org/abs/2605.19576">Library Drift: Diagnosing and Fixing a Silent Failure Mode in Self-Evolving LLM Skill Libraries</a> — Names and characterizes the gradual rot that unbounded skill libraries suffer as new entries conflict with old ones.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Audit the five highest-token-cost tools in the @tool catalog and pilot Formal Skill structure — schema, executor, lifecycle hooks — there first; formalize selectively where amortization actually moves cost, not uniformly across all tools.</li>
+  <li>Treat PEEK's Distiller/Cartographer/Evictor loop as a concrete design target for MessageBuilder: CxUs should be priority-ranked and evicted against a fixed token budget rather than accumulated unbounded across agent turns.</li>
+  <li>Apply Library Drift's diagnostic criteria to the @tool catalog now, before the library is large enough for drift to be invisible — establish a conflict-detection pass as part of the tool registration governance pipeline.</li>
+</ul>]]></description>
+      <pubDate>Wed, 20 May 2026 12:32:13 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_20_2026.mp3" length="7070400" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_20_2026.mp3</guid>
+      <itunes:duration>1011</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 19, 2026]]></title>
       <description><![CDATA[<p>Four papers, one argument: agents degrade when forced to derive structure from raw text at inference time. This episode traces that thesis across site reliability engineering, governance enforcement, hallucination reduction, and scientific simulation — each paper adding empirical weight to the same underlying claim that pre-structured knowledge is not a convenience, it is a performance multiplier.</p>
