@@ -4,18 +4,17 @@ Planned improvements for the PYRANA podcast pipeline.
 
 ## Host voices & personalities
 
-> Status: **partly done.** Accent (`GEMINI.styleB` = British) + per-chunk style
+> Status: **done.** Accent (`GEMINI.styleB` = British) + per-chunk style
 > direction for consistency (`src/Config.gs`, `src/Gemini.gs`) and the
-> no-self-answer rule (`src/Claude.gs`) are implemented. A **third** host is
-> still open — Gemini multi-speaker TTS supports only two speakers per call, so
-> adding a third needs an architecture change (split synthesis or a different
-> TTS path). Voice *drift* mitigation is best-effort until verified on real audio.
+> no-self-answer rule (`src/Claude.gs`) are implemented. Staying with **two**
+> hosts — a third is tabled. Voice *drift* mitigation is best-effort until
+> verified on real audio.
 
-- **Distinct, consistent voices.** Have two or three hosts, each with a clearly
-  distinct voice and personality that engages the listener directly. Today there
-  are two (`GEMINI.voiceA` / `voiceB` in `src/Config.gs`), but a voice sometimes
-  drifts subtly mid-episode — it shifts enough to notice without sounding like a
-  different person. Each host should sound rock-solid consistent start to finish.
+- **Distinct, consistent voices.** Two hosts, each with a clearly distinct voice
+  and personality that engages the listener directly (`GEMINI.voiceA` / `voiceB`
+  in `src/Config.gs`). A voice sometimes drifts subtly mid-episode — it shifts
+  enough to notice without sounding like a different person. Each host should
+  sound rock-solid consistent start to finish.
 - **Consider an accent for one host** to make the two voices unmistakably
   different from each other.
 - **Never let a host answer their own question.** A question raised by one host
