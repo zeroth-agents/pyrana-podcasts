@@ -137,6 +137,8 @@ function generatePodcastScript(subject, emailBody, papers) {
   Logger.log('  ✏️  Script pass...');
   const targetMinutes = CONFIG.CLAUDE.targetMinutes;
   const targetWords = targetMinutes * 150;
+  const maxMinutes = CONFIG.CLAUDE.maxMinutes || targetMinutes;
+  const maxWords = maxMinutes * 150;
   const minWords = CONFIG.CLAUDE.minWords || Math.round(targetWords * 0.85);
   const buildContext = CONFIG.PODCAST.buildContext || '';
 
@@ -146,28 +148,35 @@ function generatePodcastScript(subject, emailBody, papers) {
     (buildContext ? 'CONTEXT — what "we" are building:\n' + buildContext + '\n\n' : '') +
     'Two hosts trade lines:\n' +
     '  HOST_A — warm, curious. Asks great questions on behalf of the listener. ' +
-    'Frequently summarizes, asks for plain-English re-explanations, and connects ' +
-    'ideas across papers. When HOST_B uses jargon, HOST_A is the one who says ' +
-    '"wait, back up — what does that actually mean?"\n' +
+    'Frequently summarizes, presses for clearer re-explanations when something ' +
+    'is murky, and connects ideas across papers. When HOST_B uses jargon, ' +
+    'HOST_A is the one who says "wait, back up — what does that actually mean?"\n' +
     '  HOST_B — deep technical knowledge but explains everything like a great ' +
     'teacher. Sharp, specific opinions. Names mechanisms and cites numbers, but ' +
-    'always grounds them in plain English and analogies before getting deep. ' +
+    'grounds them in everyday language and analogies before getting deep. ' +
     'Will push back when something doesn\'t add up.\n\n' +
     'ACCESSIBILITY — read this carefully.\n' +
     'These episodes were getting too technical too quickly. The audience is ' +
-    'smart but not specialists in every AI subfield. Rules:\n' +
+    'smart but not specialists in every AI subfield. Pitch every explanation so ' +
+    'a listener who has NOT read the paper can follow along. This is about the ' +
+    'level you explain AT — not about announcing that you are simplifying. Rules:\n' +
     '  • Assume high-school level baseline. If you use a term beyond that ' +
     '(MoE, RLHF, MLA, RAG, KV-cache, distillation, LoRA, FlashAttention, ' +
-    'mixture-of-experts, etc.), explain it in one sentence the FIRST time it ' +
-    'appears in the episode. Best pattern: HOST_A asks for the plain version, ' +
-    'HOST_B gives it.\n' +
+    'mixture-of-experts, etc.), unpack it in one sentence the FIRST time it ' +
+    'appears in the episode. Best pattern: HOST_A asks what it means, HOST_B ' +
+    'gives a clear one-liner — then moves on.\n' +
     '  • Lead with the human-readable "what does this mean" BEFORE the mechanism. ' +
     '"This paper makes models 3x cheaper to run by changing how they remember ' +
     'context across long conversations" → THEN you can get into how it works.\n' +
     '  • Analogies welcome. "Think of it like a librarian who keeps a small ' +
     'cache of frequently-asked questions instead of re-reading the shelves every ' +
     'time" beats "they use a learned key-value approximation."\n' +
-    '  • Don\'t gatekeep. Builder context is good; jargon density is not.\n\n' +
+    '  • Don\'t gatekeep. Builder context is good; jargon density is not.\n' +
+    '  • DO NOT narrate the simplification. Never say "in plain English", "in ' +
+    'plain terms", "the plain version", "in layman\'s terms", "to put it simply", ' +
+    '"in simple terms", or similar throat-clearing. Just give the clear ' +
+    'explanation directly — the accessibility should be invisible, not announced. ' +
+    'Saying the phrase once is a tic; saying it repeatedly is grating.\n\n' +
     'Both hosts are part of the PYRANA team. They speak in first-person plural ' +
     '("our Cortex agents," "what we\'re building," "how we handle CxUs today") ' +
     'when connecting papers back to the platform. This isn\'t outsider commentary ' +
@@ -180,18 +189,27 @@ function generatePodcastScript(subject, emailBody, papers) {
     'air ("we\'re working from the abstract on this one — would love the full ' +
     'method section") rather than narrate mechanism details they don\'t actually ' +
     'have. Honest beats bluffing.\n\n' +
-    'Your job: turn the research notes below into a ' + targetMinutes +
-    '-minute conversation (target ' + targetWords + ' words, MINIMUM ' + minWords +
-    ' words — do not produce a shorter script). The notes are your source of ' +
-    'truth — every claim in the script must be grounded in them.\n\n' +
-    'LENGTH IS A HARD REQUIREMENT. If you are approaching the end of your ' +
-    'planned structure and are still under ' + minWords + ' words, you have ' +
-    'under-developed the papers. Go back into the notes and: walk through the ' +
-    'mechanism in more concrete detail, dwell longer on the steel-manned ' +
-    'objection, add a back-and-forth on what changes for builders, or surface ' +
-    'a deeper comparison to prior work. Do NOT pad with filler ("yeah", ' +
-    '"totally", recap loops) — add real substance from the notes.\n\n' +
-    'Structure (rough budget for a ' + targetMinutes + '-min episode):\n' +
+    'Your job: turn the research notes below into a host conversation. The ' +
+    'notes are your source of truth — every claim in the script must be ' +
+    'grounded in them.\n\n' +
+    'LENGTH IS ADAPTIVE. Target ~' + targetMinutes + ' minutes (~' + targetWords +
+    ' words) on a typical day, with a hard MINIMUM of ' + minWords + ' words — ' +
+    'never produce a shorter script. You MAY run longer, up to a ceiling of ~' +
+    maxMinutes + ' minutes (~' + maxWords + ' words), but ONLY when the notes ' +
+    'genuinely justify it: more papers, deeper mechanisms, or a meaty ' +
+    'steel-manned debate worth dwelling on. Let the material decide. A thin ' +
+    'day should land near the ' + targetMinutes + '-minute target — do NOT pad ' +
+    'to fill time. A rich day should use the extra room for real substance, not ' +
+    'filler.\n\n' +
+    'If you are approaching the end of your planned structure and are still ' +
+    'under ' + minWords + ' words, you have under-developed the papers. Go back ' +
+    'into the notes and: walk through the mechanism in more concrete detail, ' +
+    'dwell longer on the steel-manned objection, add a back-and-forth on what ' +
+    'changes for builders, or surface a deeper comparison to prior work. Do NOT ' +
+    'pad with filler ("yeah", "totally", recap loops) — add real substance from ' +
+    'the notes.\n\n' +
+    'Structure (rough budget for a ' + targetMinutes + '-min episode — scale ' +
+    'each segment proportionally if the material warrants a longer episode):\n' +
     '  1. EXTENDED COLD OPEN (~90-120s, ~250 words). Two beats:\n' +
     '       (a) The day\'s theme — what links the papers in this batch, in ' +
     'one human sentence. "Today is mostly about making retrieval cheaper" or ' +
@@ -205,7 +223,7 @@ function generatePodcastScript(subject, emailBody, papers) {
     'in the cold open. Stay readable.\n' +
     '  2. Walk through the papers, one at a time. Each paper deserves roughly ' +
     '3 minutes (~450 words). For each paper, IN THIS ORDER:\n' +
-    '       (a) Plain-English summary first (~60s): "This paper shows X by ' +
+    '       (a) Accessible summary first (~60s): "This paper shows X by ' +
     'doing Y, and the headline result is Z." No jargon yet. The listener ' +
     'should understand what the paper is even if they tune out the next part.\n' +
     '       (b) Mechanism walk-through (~90s): NOW you can get into how it ' +
@@ -233,6 +251,10 @@ function generatePodcastScript(subject, emailBody, papers) {
     '  • Short interjections are allowed (and good). It does not have to be strict ' +
     'A-B-A-B alternation. A one-word "right" or "wait" line from the other host ' +
     'reads as natural.\n' +
+    '  • A host NEVER answers their own question. If a host poses a question, the ' +
+    'NEXT line must be the OTHER host responding. Never have one host ask ' +
+    'something and then answer it themselves in the same or a following line. ' +
+    'Questions are handed to the other host, always.\n' +
     '  • Light humor. No forced jokes. No corporate energy.\n' +
     '  • If the notes say "n/a" or flag thin source material, the hosts should ' +
     'say so honestly ("we only have the abstract on this one") rather than bluff.\n\n' +

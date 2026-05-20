@@ -74,9 +74,14 @@ const CONFIG = {
     scriptModel: 'claude-opus-4-7',
     researchMaxTokens: 8000,
     scriptMaxTokens: 16000,
+    // Length is adaptive: targetMinutes is the default, maxMinutes is the
+    // ceiling for unusually rich days (more papers / deeper material).
+    // Opus expands toward maxMinutes only when the notes justify it, and
+    // never pads thin days past the target. ~150 wpm.
     targetMinutes: 15,
-    // Floor the script length so Opus doesn't wrap up early when the
-    // soft target is "~N minutes". 150 wpm × minutes × 0.85 floor.
+    maxMinutes: 30,
+    // Floor the script length so Opus doesn't wrap up early. 150 wpm ×
+    // targetMinutes × 0.85 floor.
     minWords: 1900,
   },
 
@@ -92,6 +97,12 @@ const CONFIG = {
     model: 'gemini-2.5-flash-preview-tts',
     voiceA: 'Kore',     // HOST_A — warm
     voiceB: 'Charon',   // HOST_B — authoritative
+    // Per-host delivery direction, repeated in every TTS chunk prompt so
+    // each voice stays consistent start-to-finish (Gemini otherwise drifts
+    // subtly between calls). Keep voiceB's accent distinct from voiceA so
+    // the two are never mistaken for each other.
+    styleA: 'a warm, curious tone with a neutral American accent',
+    styleB: 'a crisp British accent and an authoritative, teacherly tone',
     sampleRate: 24000,  // Gemini TTS output rate (don't change)
   },
 };

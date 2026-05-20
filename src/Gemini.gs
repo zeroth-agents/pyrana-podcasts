@@ -82,8 +82,17 @@ function countWords(s) {
  * Returns a Uint8Array of raw PCM bytes (24kHz, 16-bit, mono, little-endian).
  */
 function synthesizeChunk(apiKey, turns) {
-  const lines = ['TTS the following conversation between ' +
-                 GEMINI_SPEAKER_A + ' and ' + GEMINI_SPEAKER_B + ':'];
+  const styleA = CONFIG.GEMINI.styleA;
+  const styleB = CONFIG.GEMINI.styleB;
+  const intro = 'TTS the following conversation between ' +
+                GEMINI_SPEAKER_A + ' and ' + GEMINI_SPEAKER_B + '.';
+  const direction = (styleA || styleB)
+    ? ' Throughout, ' + GEMINI_SPEAKER_A + ' speaks with ' +
+      (styleA || 'a consistent tone') + ', and ' + GEMINI_SPEAKER_B +
+      ' speaks with ' + (styleB || 'a consistent tone') +
+      '. Keep each voice consistent the whole time.'
+    : '';
+  const lines = [intro + direction];
   for (const t of turns) {
     const speaker = t.speaker === 'A' ? GEMINI_SPEAKER_A : GEMINI_SPEAKER_B;
     lines.push(speaker + ': ' + t.text);

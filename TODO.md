@@ -4,6 +4,13 @@ Planned improvements for the PYRANA podcast pipeline.
 
 ## Host voices & personalities
 
+> Status: **partly done.** Accent (`GEMINI.styleB` = British) + per-chunk style
+> direction for consistency (`src/Config.gs`, `src/Gemini.gs`) and the
+> no-self-answer rule (`src/Claude.gs`) are implemented. A **third** host is
+> still open — Gemini multi-speaker TTS supports only two speakers per call, so
+> adding a third needs an architecture change (split synthesis or a different
+> TTS path). Voice *drift* mitigation is best-effort until verified on real audio.
+
 - **Distinct, consistent voices.** Have two or three hosts, each with a clearly
   distinct voice and personality that engages the listener directly. Today there
   are two (`GEMINI.voiceA` / `voiceB` in `src/Config.gs`), but a voice sometimes
@@ -17,6 +24,10 @@ Planned improvements for the PYRANA podcast pipeline.
 
 ## Technical level & "plain English" tic
 
+> Status: **done.** Reframed the accessibility rules in `src/Claude.gs` to
+> describe the target level, added an explicit ban on saying "in plain English"
+> and its variants, and renamed the internal "Plain-English summary" label.
+
 - **Stop the hosts from literally saying "in plain English."** The script prompt
   in `src/Claude.gs` instructs the hosts to explain things plainly (the phrase
   "plain English" / "plain version" appears throughout the prompt). The model has
@@ -29,6 +40,8 @@ Planned improvements for the PYRANA podcast pipeline.
   announce.
 
 ## Compare papers to outside work via Parallel.ai (bigger)
+
+> Status: **deferred** — blocked on a Parallel.ai account / API key.
 
 **Goal.** Right now we only compare each paper to PYRANA/Cortex (the
 "Connection to PYRANA/Cortex" line in the research pass). We don't compare a
@@ -77,6 +90,10 @@ considering the Task API later for deeper comparison.
   the rest can be wired up against the REST API.
 
 ## Variable episode length (15-min target, 30-min cap)
+
+> Status: **done** (pending real-run verification). Added `CONFIG.CLAUDE.maxMinutes`
+> (= 30) and made the script-pass length prompt adaptive in `src/Claude.gs`. Still
+> need to confirm a max-length run fits the 6-min Apps Script cap.
 
 **Goal.** Keep ~15 minutes as the *target*, but let richer days run longer — up
 to a **30-minute cap** — when the material warrants it. Some papers (or a denser
