@@ -18,7 +18,33 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Wed, 20 May 2026 13:21:35 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2026 14:24:08 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 21, 2026]]></title>
+      <description><![CDATA[<p>Four papers, one shared subject: the orchestration shell that sits between a language model and the work it's supposed to do. Today's digest covers caching, compositional workflow synthesis, governance-by-design, and corpus-level trace diagnostics — all attacking different layers of the same agentic stack. Together they sketch a cleaner, faster, safer version of what production agent platforms need to be.</p>
+
+<p>The fit with PYRANA is unusually direct. The caching paper maps onto PlannerDelegatorWorkflow latency and CxU retrieval freshness. The AgentCo-op synthesis work challenges our hand-authored YAML config approach. The governance paper is the clearest published articulation of what pyrana-audit and the output gateway are trying to be. And the trace diagnostics paper describes what pyrana-telemetry should grow into. All four carry concrete Monday-morning implications.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.20630">Evaluating Temporal Semantic Caching and Workflow Optimization in Agentic Plan-Execute Pipelines</a> — Classifying queries by time-sensitivity before caching cuts median pipeline latency from 34 seconds to under 10.</li>
+  <li><a href="https://arxiv.org/abs/2605.20425">\methodname: Retrieval-Based Synthesis of Interoperable Multi-Agent Workflows</a> — Automatically composing workflow graphs by retrieval over a skill library beats hand-authored configs on most benchmarks.</li>
+  <li><a href="https://arxiv.org/abs/2605.20874">Governance by Construction for Generalist Agents</a> — Embeds policy constraints into agent architecture at build time rather than patching them on at runtime.</li>
+  <li><a href="https://arxiv.org/abs/2605.21347">Insights Generator: Systematic Corpus-Level Trace Diagnostics for LLM Agents</a> — Analyzes agent trace corpora to surface systematic failure patterns rather than debugging individual runs.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Ship the two risk-free MCP wins in GenericExecutor this sprint — disk-cached tool discovery and DAG-parallel execution of independent plan steps — and defer temporal semantic caching until we measure actual query paraphrase repetition on JNJ and recurring workflows, since a wrong cache hit returning a stale CxU is worse than a clean miss in any compliance context.</li>
+  <li>Audit our YAML-driven workflow authoring against the AgentCo-op retrieval-synthesis approach — if our skill and tool library is large enough, auto-composing graphs from task descriptions could replace hand-wired configs and cut onboarding time for new tenants.</li>
+  <li>Map the governance-by-construction constraints from paper three directly onto the pyrana-audit and output gateway spec, and scope pyrana-telemetry's next iteration around corpus-level pattern detection from paper four rather than single-trace inspection alone.</li>
+</ul>]]></description>
+      <pubDate>Thu, 21 May 2026 12:26:28 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_21_2026.mp3" length="7139712" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_21_2026.mp3</guid>
+      <itunes:duration>992</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 20, 2026]]></title>
       <description><![CDATA[<p>Today's four papers share a single anxiety: agent systems that quietly degrade as they scale. The episode traces two failure vectors — skill libraries that bloat and drift over time, and long-context agents that waste tokens re-orienting themselves on every turn — and examines the runtime primitives that could contain both problems. Listeners come away with concrete vocabulary for the "reasoning vs. bookkeeping" split and a clearer picture of where structured formalism pays off versus where it adds authoring cost.</p>
