@@ -1,0 +1,18 @@
+<p>Four papers, one shared subject: the orchestration shell that sits between a language model and the work it's supposed to do. Today's digest covers caching, compositional workflow synthesis, governance-by-design, and corpus-level trace diagnostics — all attacking different layers of the same agentic stack. Together they sketch a cleaner, faster, safer version of what production agent platforms need to be.</p>
+
+<p>The fit with PYRANA is unusually direct. The caching paper maps onto PlannerDelegatorWorkflow latency and CxU retrieval freshness. The AgentCo-op synthesis work challenges our hand-authored YAML config approach. The governance paper is the clearest published articulation of what pyrana-audit and the output gateway are trying to be. And the trace diagnostics paper describes what pyrana-telemetry should grow into. All four carry concrete Monday-morning implications.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.20630">Evaluating Temporal Semantic Caching and Workflow Optimization in Agentic Plan-Execute Pipelines</a> — Classifying queries by time-sensitivity before caching cuts median pipeline latency from 34 seconds to under 10.</li>
+  <li><a href="https://arxiv.org/abs/2605.20425">\methodname: Retrieval-Based Synthesis of Interoperable Multi-Agent Workflows</a> — Automatically composing workflow graphs by retrieval over a skill library beats hand-authored configs on most benchmarks.</li>
+  <li><a href="https://arxiv.org/abs/2605.20874">Governance by Construction for Generalist Agents</a> — Embeds policy constraints into agent architecture at build time rather than patching them on at runtime.</li>
+  <li><a href="https://arxiv.org/abs/2605.21347">Insights Generator: Systematic Corpus-Level Trace Diagnostics for LLM Agents</a> — Analyzes agent trace corpora to surface systematic failure patterns rather than debugging individual runs.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Ship the two risk-free MCP wins in GenericExecutor this sprint — disk-cached tool discovery and DAG-parallel execution of independent plan steps — and defer temporal semantic caching until we measure actual query paraphrase repetition on JNJ and recurring workflows, since a wrong cache hit returning a stale CxU is worse than a clean miss in any compliance context.</li>
+  <li>Audit our YAML-driven workflow authoring against the AgentCo-op retrieval-synthesis approach — if our skill and tool library is large enough, auto-composing graphs from task descriptions could replace hand-wired configs and cut onboarding time for new tenants.</li>
+  <li>Map the governance-by-construction constraints from paper three directly onto the pyrana-audit and output gateway spec, and scope pyrana-telemetry's next iteration around corpus-level pattern detection from paper four rather than single-trace inspection alone.</li>
+</ul>
