@@ -18,7 +18,33 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Thu, 21 May 2026 14:24:08 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 22 May 2026 12:21:52 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — May 22, 2026]]></title>
+      <description><![CDATA[<p>Four papers, one vertical stack. This episode traces a path from application benchmarking through agent self-modification and tool surface design down to multi-agent security — each paper landing at a different layer of the same architecture. Listeners come away with a clear map of where the frontier is moving simultaneously across evaluation, self-improvement, API unification, and governed communication.</p>
+
+<p>For PYRANA and Cortex, the stakes are concrete: WorkstreamBench hands us both a scoring threat and a ready-made CxU schema for financial agent output. MOSS is the reference architecture for any future self-patching harness work. HarnessAPI closes a real gap where PYRANA tools are agent-reachable but not HTTP-reachable. And LCGuard surfaces a governance blind spot — KV cache sharing — that needs to be documented before any cache-efficiency work ships.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.22664">WorkstreamBench: Evaluating LLM Agents on End-to-End Spreadsheet Tasks in Finance</a> — First transparent benchmark for complex financial spreadsheet construction; even top agents fall short of professional standards.</li>
+  <li><a href="https://arxiv.org/abs/2605.22794">MOSS: Self-Evolution through Source-Level Rewriting in Autonomous Agent Systems</a> — Agent rewrites its own harness-level source code from failure logs, lifting task scores from 0.25 to 0.61 in one cycle.</li>
+  <li><a href="https://arxiv.org/abs/2605.22733">HarnessAPI: A Skill-First Framework for Unified Streaming APIs and MCP Tools</a> — Single skill definition that exposes tools to both AI agents and standard HTTP clients simultaneously.</li>
+  <li><a href="https://arxiv.org/abs/2605.22786">LCGuard: Latent Communication Guard for Safe KV Sharing in Multi-Agent Systems</a> — Detects covert information leakage through shared KV caches in multi-agent deployments.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Run pyrana-demo-2 against WorkstreamBench this sprint and publish internal scores; also adopt the Accuracy/Formula/Format taxonomy directly as a CxU sub-claim schema for financial agent artifacts, mapping each dimension to a verifiable pass/fail verdict with supporting evidence.</li>
+  <li>Use MOSS as the reference architecture for the self-patching harness design — specifically its seven-stage pipeline with an external coding agent and sandboxed rollback — whenever that work enters the sprint queue.</li>
+  <li>Before shipping any KV cache efficiency feature, document the LCGuard threat model in the Cortex governance layer and specify what the audit trail can and cannot observe about inter-agent latent communication.</li>
+</ul>]]></description>
+      <pubDate>Fri, 22 May 2026 11:51:45 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_May_22_2026.mp3" length="7556352" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_May_22_2026.mp3</guid>
+      <itunes:duration>1025</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — May 21, 2026]]></title>
       <description><![CDATA[<p>Four papers, one shared subject: the orchestration shell that sits between a language model and the work it's supposed to do. Today's digest covers caching, compositional workflow synthesis, governance-by-design, and corpus-level trace diagnostics — all attacking different layers of the same agentic stack. Together they sketch a cleaner, faster, safer version of what production agent platforms need to be.</p>
