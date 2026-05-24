@@ -68,7 +68,8 @@ function processSingleEmail(msg) {
   Logger.log('  → ' + scriptTurns.length + ' dialogue turns, ' +
              scriptTurns.reduce(function (n, t) { return n + t.text.length; }, 0) + ' chars');
 
-  const showNotes = generateShowNotes(subject, scriptTurns, papers);
+  const showNotes = generateShowNotes(subject, scriptTurns, papers,
+                                      { deeperCompare: result.deeperCompare });
   Logger.log('  → ' + showNotes.length + ' chars of show notes');
 
   Logger.log('  🎙️  Synthesizing audio (Gemini multi-speaker)...');
@@ -165,7 +166,8 @@ function republishSingleEmail(msg, newFilename, oldFilename) {
   const result = generatePodcastScript(subject, body, papers);
   const scriptTurns = result.turns;
 
-  const showNotes = generateShowNotes(subject, scriptTurns, papers);
+  const showNotes = generateShowNotes(subject, scriptTurns, papers,
+                                      { deeperCompare: result.deeperCompare });
 
   const pcm = synthesizeEpisode(scriptTurns);
   const audioBlob = encodePcmToMp3(pcm);
