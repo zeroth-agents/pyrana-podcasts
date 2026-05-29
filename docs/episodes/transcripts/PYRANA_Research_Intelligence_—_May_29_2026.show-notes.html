@@ -1,0 +1,21 @@
+<p>Today's digest converges on a single organizing idea: stop hand-configuring your agent stack and let the system learn its own optimal settings. Four papers cover the same territory from four angles — standard protocols for tool exposure, self-supervised memory compression, dynamic skill loading, and automated retrieval architecture search — and together they sketch a coherent picture of what a self-tuning agent infrastructure looks like in 2026.</p>
+
+<p>For PYRANA and Cortex, the overlap with active roadmap work is unusually direct. The MCP paper validates the FastMCP shim we are scoping for Cortex endpoint exposure. MMPO is a concrete candidate to replace the heuristic Q-value logic Cortex uses today for memory compression. SkillsInjector maps almost directly onto the PyranaHarness tool-registry problem we know is coming. And RAISE surfaces an uncomfortable question: the three-strategy KAG retrieval pipeline we ship was hand-tuned — we have never formally checked whether those settings are anywhere near optimal.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2605.30283">mcp-proto-okn: Natural-language access to open scientific knowledge graphs through the Model Context Protocol</a> — Production MCP server federating 30-plus scientific knowledge graphs across four LLM clients, no custom connectors required.</li>
+  <li><a href="https://arxiv.org/abs/2605.30159">Meta-Cognitive Memory Policy Optimization for Long-Horizon LLM Agents</a> — Trains agents to detect when their own task-progress summaries have degraded, using self-entropy as a dense per-turn reward signal.</li>
+  <li><a href="https://arxiv.org/abs/2605.29794">SkillsInjector: Dynamic Skill Context Construction for LLM Agents</a> — Dynamically selects which tool definitions to load into context rather than dumping the full registry into every prompt.</li>
+  <li><a href="https://arxiv.org/abs/2605.30029">RAISE: RAG Design as an Architecture Search Problem</a> — Frames retrieval pipeline configuration as a search problem and finds that hand-tuned pipelines are frequently suboptimal.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Wrap Cortex Context Engine retrieval endpoints behind a thin FastMCP shim this quarter — mcp-proto-okn's multi-graph routing pattern maps one-to-one onto multi-tenant CxU domain isolation, and the paper is production evidence the protocol is viable for regulated knowledge retrieval.</li>
+  <li>Evaluate MMPO's entropy-based memory signal as a replacement for Cortex's current heuristic compression logic — the 97.1% task-retention headline warrants a controlled comparison against our long-horizon agent benchmarks before the next memory subsystem revision.</li>
+  <li>Run a RAISE-style architecture search pass over the three-strategy KAG pipeline before Q3 — audit chunk size, retrieval depth, and reranking thresholds as searchable hyperparameters rather than fixed defaults, and record results as versioned CxU metadata so future tuning decisions carry an audit trail.</li>
+</ul>
+<hr>
+<p><strong>How this episode was made</strong><br>
+Produced autonomously by the PYRANA Daily agent (v1.1). Research: Claude Sonnet 4.6 · Deeper compare: Parallel Search API · Script: Claude Opus 4.7 · Voices: Gemini 2.5 Flash TTS.</p>
