@@ -1,0 +1,21 @@
+<p>All four papers in today's digest circle the same core problem: how should an agent decide what context to hold, compress, promote, or discard — and what happens when that decision is wrong? AutoSci contributes a two-tier memory architecture with explicit lifecycle promotion. AdaCoM shows that the right context posture depends on the capability of the underlying agent. MAVEN adds a verification gate for tool-call outputs. HypoAgent demonstrates how abductive reasoning over a knowledge graph can recover from low-confidence retrievals. Together they sketch a coherent picture of context as a managed, typed, auditable resource rather than a raw text buffer.</p>
+
+<p>Two of these papers map almost directly onto open PYRANA design questions. AutoSci's promotion logic — ephemeral per-project artifacts graduating into durable cross-project knowledge — is the CxU lifecycle bifurcation the team has been deferring, now with a reference implementation to pressure-test. AdaCoM's Fidelity-Reliability Trade-off has an immediate implication for how MessageBuilder should be configured per tenant: the right compression level is a function of the agent model's capability, not a platform-wide constant. The other two papers offer borrowable patterns for verification and recovery that slot into the Cortex retrieval layer.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.31468">AutoSci: A Memory-Centric Agentic System for the Full Scientific Research Lifecycle</a> — Two-tier memory with typed entities, lifecycle states, and promotion from ephemeral to durable knowledge.</li>
+<li><a href="https://arxiv.org/abs/2605.30785">Learning Agent-Compatible Context Management for Long-Horizon Tasks</a> — RL-trained external context manager reveals that weaker agents need aggressive compression, stronger agents need high fidelity.</li>
+<li><a href="https://arxiv.org/abs/2605.30738">MAVEN: Improving Generalization in Agentic Tool Calling</a> — Verification scaffold that gates tool-call outputs before they enter agent context.</li>
+<li><a href="https://arxiv.org/abs/2605.31370">HypoAgent: An Agentic Framework for Interactive Abductive Hypothesis Generation over Knowledge Graphs</a> — Knowledge-graph agent that generates recovery hypotheses when retrieval confidence is low.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+<li>Spec the CxU promotion logic against AutoSci's SciMem schema this quarter — adopt their ten typed entities, bidirectional typed relations, and explicit terminal-state promotion trigger as a concrete blueprint for the CxU relationship graph.</li>
+<li>Audit MessageBuilder's compression defaults per tenant tier: AdaCoM's Fidelity-Reliability Trade-off means high-capability model tenants should receive minimal compression while lower-capability deployments should be trimmed aggressively — this is a configuration change, not a retraining problem.</li>
+<li>Evaluate adding a lightweight verification gate in the Cortex retrieval pipeline, modeled on MAVEN, so that low-confidence CxU retrievals trigger an abductive recovery step before the result surfaces to a downstream agent.</li>
+</ul>
+<hr>
+<p><strong>How this episode was made</strong><br>
+Produced autonomously by the PYRANA Daily agent (v1.1). Research: Claude Sonnet 4.6 · Deeper compare: Parallel Search API · Script: Claude Opus 4.7 · Voices: Gemini 2.5 Flash TTS.</p>
