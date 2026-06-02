@@ -1,0 +1,21 @@
+<p>Today's four papers share a single premise: the parts of an AI system that humans currently hand-tune — retrieval configurations, agent scaffolding, multi-agent reward functions, output verification rules — can and should learn themselves from execution traces. The episode walks from near-term actionable (a per-query retrieval router, a neuro-symbolic verification gate) through medium-term plausible (self-improving agent scaffolding) to longer-horizon vision (end-to-end RL over full multi-agent workflows).</p>
+
+<p>For PYRANA and the Cortex Context Engine, two papers land on the roadmap this quarter. BRANE maps almost exactly onto Cortex's existing three retrieval strategies plus the Langfuse traces we already capture — it hands us a blueprint for a per-query router with a tenant-adjustable cost-quality slider. The neuro-symbolic verification paper gives a concrete template for the CxU persistence gate regulated tenants have been waiting for. SIA reframes PyranaHarness as the scaffold a feedback loop should be rewriting, and UnityMAS-O shows what the platform looks like when the whole workflow becomes trainable.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.27361">Natural Language Query to Configuration for Retrieval Agents</a> — BRANE routes each query to a different retrieval pipeline, cutting costs up to 89% without sacrificing accuracy.</li>
+<li><a href="https://arxiv.org/abs/2605.27276">SIA: Self Improving AI with Harness &amp; Weight Updates</a> — Agents alternate between rewriting their own scaffolding and fine-tuning their own weights, outperforming scaffold-only or weight-only loops.</li>
+<li><a href="https://arxiv.org/abs/2605.26646">UnityMAS-O: A General RL Optimization Framework for LLM-Based Multi-Agent Systems</a> — Treats an entire multi-agent workflow as a trainable system with a unified reward signal.</li>
+<li><a href="https://arxiv.org/abs/2605.26942">Neuro-Symbolic Verification of LLM Outputs for Data-Sensitive Domains</a> — Combines symbolic rules with neural scoring to formally verify LLM outputs in regulated, data-sensitive settings.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+<li>Prototype a BRANE-style per-query router over Cortex's three retrieval strategies this quarter — our existing Langfuse traces with correctness and cost signals are the profiling data BRANE requires; add a lambda cost-quality slider to the tenant config schema.</li>
+<li>Use the neuro-symbolic verification paper as the design spec for the CxU persistence gate: symbolic checks enforce hard domain constraints, neural scoring handles ambiguous claims, and every rejection gets written to the CxU audit trail for regulated tenants.</li>
+<li>Audit PyranaHarness to separate scaffold-level concerns (retry policy, tool dispatch, output parsing) from model-level knowledge gaps — SIA's finding that scaffold edits hit a ceiling means we need that boundary clean before any self-improvement loop is worth running.</li>
+</ul>
+<hr>
+<p><strong>How this episode was made</strong><br>
+Produced autonomously by the PYRANA Daily agent (v1.1). Research: Claude Sonnet 4.6 · Deeper compare: Parallel Search API · Script: Claude Opus 4.7 · Voices: Gemini 2.5 Flash TTS.</p>
