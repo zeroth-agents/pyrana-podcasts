@@ -1,0 +1,75 @@
+HOST_A: Welcome back to PYRANA Daily. It's June 2nd, and today's batch has a pretty clean throughline — every paper on the desk is about making our system smarter without us having to hand-tune it.
+HOST_B: Yeah, the theme I keep landing on is "stop configuring, start optimizing." We've got four papers that all push some piece of an AI system from a thing a human writes in YAML to a thing that learns its own settings from traces.
+HOST_A: And for us specifically — for PYRANA and the Cortex Context Engine — two of these are directly actionable this quarter. BRANE is essentially a blueprint for a smarter retrieval router over our existing three strategies, and the neuro-symbolic verification paper gives us a real template for the CxU persistence gate we owe our regulated tenants.
+HOST_B: SIA is the interesting medium-term one — it's about agents that improve themselves — and UnityMAS-O is the further-out vision paper, where the whole multi-agent workflow becomes trainable. We can't run that today, but it tells us what to build toward.
+HOST_A: Okay, so plan for the next fifteen minutes: walk the four papers, plain English first, then come back at the end and talk about what we should actually change in the platform.
+HOST_B: Sounds good. Let's start with BRANE.
+HOST_A: Right, BRANE — out of Berkeley and Microsoft, Matei Zaharia's group among others. Give me the one-sentence version.
+HOST_B: One sentence: instead of picking one retrieval pipeline for your whole app, BRANE picks a different pipeline per query, and it does it cheaply enough that you get the same accuracy as the best fixed setup at up to 89% lower cost.
+HOST_A: 89% is a huge number. What's the trick?
+HOST_B: The trick is they noticed that different queries inside the same corpus actually want different pipelines. Some need a heavy multi-hop retriever with a frontier model, some just need a one-shot vector lookup with a cheap model. If you commit to one config for everything, you're overpaying on the easy queries and underperforming on the hard ones.
+HOST_A: Okay, but how does it pick? Because if picking is expensive you've eaten your savings.
+HOST_B: Right, that's the elegant part. They do an offline profiling pass — run a sample of queries against every candidate configuration, record whether it got the right answer and what it cost. Then a frontier model proposes binary characteristics that matter for that specific workload — things like "requiresmultihop" or, in their food benchmark, "involvesregional_cuisine."
+HOST_A: Wait, back up — these are just yes/no tags about the query?
+HOST_B: Exactly. Cheap binary labels. And then for each configuration on the Pareto frontier — meaning the cost-versus-accuracy frontier — they train a tiny predictor that says "given these tags, what's the probability this config gets it right?" At inference, one cheap LLM call tags the incoming query, every Pareto config gets scored, and you pick the best one with a lambda knob that trades cost against quality.
+HOST_A: And the lambda is tenant-adjustable without retraining?
+HOST_B: Yes. That's the part that maps so cleanly onto how we'd want to expose this in PYRANA — every tenant gets a slider in their config.
+HOST_A: What about the objection though? You mentioned the profiling was expensive.
+HOST_B: Eleven thousand dollars for one workload — 600 queries times 60 configurations. That's a one-time onboarding cost per tenant corpus, which is fine for a big enterprise tenant but doesn't amortize at the long tail. And the other thing — this is a retrospective method. If your tenant's query distribution drifts, the predictors get stale.
+HOST_A: So it's the right bet for stable enterprise knowledge bases, less so for something that's evolving daily.
+HOST_B: Exactly. For us, Cortex already has three retrieval strategies — vector, graph, hybrid — and we already capture Langfuse traces with correctness and cost. That's literally the profiling signal BRANE needs. Builder takeaway is concrete: prototype a per-query router over our three strategies this quarter, and add the lambda slider to tenant config.
+HOST_A: Good. Paper two — SIA, Self Improving AI with Harness and Weight Updates.
+HOST_B: Plain English: an agent that rewrites its own scaffolding and also fine-tunes its own model weights, alternating between the two based on what it learns from its own execution traces. Gets 25 points over prior state-of-the-art on a Chinese legal classification benchmark, 12% faster GPU kernels, 20 points on RNA denoising.
+HOST_A: Okay, "scaffolding" is doing work there. Define that for me.
+HOST_B: Scaffolding is everything around the model that isn't the model's weights. The system prompt, the retry policy, how tools get dispatched, how you extract the final answer from the model's output. The harness, basically. PYRANA's PyranaHarness is exactly this — the YAML and code that wraps a model into an agent.
+HOST_A: And weight updates means actually retraining the model itself.
+HOST_B: Right, and they do it cheaply with LoRA — Low-Rank Adaptation, a technique where instead of updating all the model's billions of parameters, you train a tiny add-on layer that nudges its behavior. Much cheaper, much faster.
+HOST_A: So the loop is: run the agent, look at what happened, decide whether the problem is in the scaffolding or in the model's actual knowledge, and fix whichever one.
+HOST_B: A Feedback-Agent makes that decision. It sees the full trajectory — every prompt, every tool call, every result — plus the aggregate metrics, and picks: rewrite the scaffold with weights frozen, or run an RL weight update with the scaffold frozen.
+HOST_A: And the punchline is that you need both?
+HOST_B: That's the core claim. Scaffold-only iteration hits a ceiling. Their finding is that scaffold edits tend to fix infrastructure — parsing bugs, retry hygiene, tool dispatch — while weight updates inject actual domain intuition that no prompt can reach.
+HOST_A: So what's the catch?
+HOST_B: Two big ones. First, all three benchmarks have deterministic verifiers — there's a right answer the RL reward can latch onto. CxU extraction quality doesn't have that. It's fuzzy and multi-dimensional. Second, the base model is gpt-oss-120b, which isn't publicly available, so replication is rough.
+HOST_A: But the harness-only half — they call that SIA-H — that we could run today.
+HOST_B: Yeah, and that's the builder takeaway. We don't own base model weights, so the weight-update arm is out of scope. But a harness-only loop over PyranaHarness configs, using Langfuse traces as the trajectory input — that's implementable now. And we should instrument it to detect when scaffold improvement plateaus, because that plateau is the signal we'd eventually want to escalate.
+HOST_A: Plateau detection as a future flag. I like that. Paper three — neuro-symbolic verification of LLM outputs. This is the regulated-tenant one.
+HOST_B: Plain English: when you have an LLM writing reports in a domain where mistakes are dangerous — they study medical device damage reports — you can't just trust the model and you can't just have another LLM check it, because the second LLM has the same blind spots. So they build a hybrid: formal logic checks the structured stuff, embedding similarity checks the free text, and the whole thing runs on-premises.
+HOST_A: Numbers?
+HOST_B: 83% catch rate on structured entity errors, 72% on semantic fabrications, and report creation time drops 30% even with the verification overhead.
+HOST_A: Walk me through the pipeline.
+HOST_B: Four stages. Before the LLM is even called, they validate the input using tableaux logic — that's a classical theorem-proving technique that gives you mathematically guaranteed answers about whether some condition is satisfied.
+HOST_A: Tableaux as in the logic, not the spreadsheet.
+HOST_B: Right. The point is, for structured constraints, it's provably correct. If a safety-critical keyword shows up, they can encode "then failure-mode classification becomes mandatory" as a hard rule, and the tableaux engine will block generation if the input doesn't satisfy it. Hard stops on violations, warnings on soft mismatches. Second stage is actor-based fault isolation — symbolic and neural components run as independent processes so one can't crash the other.
+HOST_A: And after generation?
+HOST_B: Type-aware checking. Structured claims — entity names, codes, dates — get verified deterministically against source data. Free-text claims get checked via embedding cosine similarity against the source context window. If the generated text drifts too far from what the source actually said, flag it.
+HOST_A: That 72% semantic catch rate worries me a little for regulated use cases. One in four fabrications gets through.
+HOST_B: It's the honest concern. In a regulated domain, that probably still needs human review on top, which means the verifier is a triage layer, not a full automation. The other limitation — they don't ablate against pure-neural guardrails like NeMo Guardrails at matched compute, so we don't know exactly how much the symbolic half is buying versus just the embedding check.
+HOST_A: For us though — this is basically the design template for our CxU persistence gate.
+HOST_B: Exactly. The normalize-derive-validate-persist pipeline maps onto pyrana-gateway. Tableaux logic checks schema and mandatory-field rules before the LLM call for REGULATED and ABSOLUTE CxUs. Embedding similarity check after, against the supporting-quotes we already attach to every CxU. Thresholds calibrated per tenant risk tier.
+HOST_A: We've been talking about that gate for months. This gives us the architecture.
+HOST_B: And it's deployable against any pre-trained model — no base-model modification needed. That's the practical distinction from the deeper neuro-symbolic literature.
+HOST_A: Okay, last one — UnityMAS-O.
+HOST_B: Plain English: it's an RL framework that treats an entire multi-agent workflow as the thing you're optimizing, instead of just optimizing one model in isolation. So you specify your planner, your retriever, your coder, your verifier as logical roles, you wire them into a graph, and the framework learns to make the whole graph better.
+HOST_A: And the headline result?
+HOST_B: Honest about this — the abstract doesn't give us crisp delta numbers, the digest scored it 6.55 composite. It's solid empirical gains rather than a step change, with the biggest improvements on smaller models. The real value is architectural, not benchmark-topping.
+HOST_A: How does the optimization actually work?
+HOST_B: It extends verl, which is an RL infrastructure for post-training single language models, into the multi-agent case. Four new abstractions: logical agent roles with their own prompts and tools, a workflow graph connecting them, configurable mappings of which agent uses which physical model, and rewards that can fire at the role level, the turn level, or over the full trajectory.
+HOST_A: Trajectory meaning the full multi-step run.
+HOST_B: Right. The optimization target is expected return over the whole trajectory, which means you have to do credit assignment — figure out which agent's action contributed to the final outcome and reward it accordingly. They run it on RAG question-answering, agentic search, and reflective code generation.
+HOST_A: Same verifier limitation as SIA, I assume.
+HOST_B: Yes — needs a clean reward signal. QA accuracy, code passing tests. Doesn't directly apply to fuzzy knowledge work. And the bigger structural issue for us is that UnityMAS-O assumes the workflow graph is fixed during training. But our PlannerDelegator generates plans dynamically — the DAG isn't static, it's emergent per request. So the graph-trajectory formalism doesn't cleanly compose with our runtime.
+HOST_A: So this is a "design vocabulary" paper for us, not a "deploy this" paper.
+HOST_B: Exactly the right framing. The four abstractions — logical roles, workflow graph, agent-model mapping, role-specific rewards — that's the schema we should use when we spec what a trainable PYRANA workflow even means. And the prerequisite is defining a verifiable reward for at least one constrained workflow type. Structured data extraction with schema validation is the obvious candidate.
+HOST_A: Okay, let's pull threads. What do we actually do?
+HOST_B: Three concrete things and one to watch. One: BRANE-style per-query router over Cortex's three retrieval strategies, profiled from existing Langfuse traces, with a tenant-configurable lambda. That's this quarter's retrieval roadmap item, and it justifies itself with the 89% cost story for tenant pitches.
+HOST_A: Two?
+HOST_B: Two: spec the neuro-symbolic CxU persistence gate for regulated tenants. Tableaux logic for hard-stop schema and mandatory-field rules before the LLM call. Embedding similarity against supporting-quotes after generation. Per-tenant risk-tier thresholds. The HAIMEDA architecture is the reference design.
+HOST_A: Three is the harness-only SIA loop?
+HOST_B: Right. SIA-H over PyranaHarness using Langfuse traces as trajectory input, with plateau detection as the future escalation signal. We don't own model weights, so we run the scaffold-improvement half only, and we instrument for the moment we hit the ceiling.
+HOST_A: And to watch?
+HOST_B: UnityMAS-O. We borrow its vocabulary now — logical roles, workflow graph, agent-model mapping, role-specific rewards — and we use it when we draft the trainable-workflow spec. But we wait on actual RL training until we have verifiable rewards on at least one workflow.
+HOST_A: Field-connection beat — what's the wider trend?
+HOST_B: All four papers are about pushing the configure-vs-train boundary outward. BRANE extends the FrugalGPT and RouteLLM model-routing line up to full-pipeline routing. SIA closes the loop between the Darwin Gödel Machine scaffold-iteration tradition and the test-time training line, sitting next to concurrent Hyperagents work. UnityMAS-O extends verl from single-policy to multi-agent, competing with MARTI and Dr. MAS. And the verification paper bridges NeMo Guardrails-style runtime validation with the deeper neuro-symbolic reasoning literature like DeepProbLog.
+HOST_A: So the field is converging on "treat the whole system as the optimization unit, but keep the verifier separate from the generator."
+HOST_B: That's the sentence. And for tomorrow — keep an eye out for anything on verifiable rewards for fuzzy knowledge tasks. That's the bottleneck blocking three of today's four papers from being directly applicable to our use case.
+HOST_A: Good place to leave it. Thanks for listening to PYRANA Daily — we'll see you tomorrow.
