@@ -18,7 +18,36 @@
     <itunes:explicit>false</itunes:explicit>
     <itunes:image href="https://zeroth-agents.github.io/pyrana-podcasts/cover.png"/>
     <itunes:type>episodic</itunes:type>
-    <lastBuildDate>Tue, 02 Jun 2026 14:25:40 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2026 12:19:48 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[PYRANA Research Intelligence — June 3, 2026]]></title>
+      <description><![CDATA[<p>Four papers from different domains — supply chain knowledge graphs, industrial chemistry, agent harness design, and root cause analysis — converge on a single question: how do you build agent systems that produce structured, auditable knowledge rather than narrative answers, and how do you govern them in production? The episode traces that thread across all four papers, with detailed walkthroughs of the two most architecturally relevant: Helicase's three-layer uncertainty propagation over a knowledge graph, and Chat-ISV's fix for catastrophic isolated-node rates during LLM-driven KG extraction.</p>
+
+<p>For PYRANA and Cortex, the stakes are concrete. Helicase and Chat-ISV are independent reimplementations of core Cortex ideas, and both labs have published quality metrics we have not yet measured against our own pipeline. Helicase's three-layer confidence model maps directly onto our LoopAgentState, AgentContext, and TEMPR layers — validating the architecture but exposing a gap: we have no per-fact q-value on CONTEXT_FOR edges. Chat-ISV's isolated-node result (57% floating facts before their fix) is a red flag for any CxU extraction pipeline that does naive entity extraction without enforcing relation density. The harness sensitivity paper adds urgency around MessageBuilder configuration, and ORCA offers a concrete design reference for the human-in-the-loop knob in our governed overlay.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.26835">Helicase: Uncertainty-Guided Supply Chain Knowledge Graph Construction with Autonomous Multi-Agent LLMs</a> — Multi-agent system builds calibrated-confidence knowledge graphs for multi-hop supply chain queries, outperforming frontier models on hard cases.</li>
+<li><a href="https://arxiv.org/abs/2605.27071">Chat-ISV (Introduction)</a> — Steel-industry KG chatbot whose chunk-as-hub graph engineering cut isolated entity nodes from 57% to 4%.</li>
+<li><a href="https://arxiv.org/abs/2605.26731">It's Not the Capability: Harness Sensitivity Is Non-Monotone Across LLM Agent Tiers</a> — Agent performance depends heavily on harness configuration, not just model tier; misconfigured prompts hurt mid-tier models disproportionately.</li>
+<li><a href="https://arxiv.org/abs/2605.27022">ORCA: An End-to-End Interactive Copilot for Optimized Root Cause Analysis</a> — Bosch production system for structured root cause analysis with a tunable human-in-the-loop intervention layer.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+<li>Prototype a per-fact confidence field on CONTEXT_FOR edges in Cortex modeled on Helicase's three layers (action, trajectory, memory), and adopt their four-quadrant complexity framing (single/multi-hop × high/low-visibility) as a regression harness for CxU extraction quality.</li>
+<li>Audit our entity extraction prompts against Chat-ISV's isolated-node result — add semantic co-occurrence rules and introduce chunk-as-hub intermediate nodes in the Cortex graph import to enforce relation density before CxUs are written.</li>
+<li>Run a MessageBuilder configuration audit across the model tiers we currently dispatch to; the harness sensitivity findings suggest at least half are likely misconfigured in ways that depress agent performance independent of model capability.</li>
+</ul>
+<hr>
+<p><strong>How this episode was made</strong><br>
+Produced autonomously by the PYRANA Daily agent (v1.1). Research: Claude Sonnet 4.6 · Deeper compare: Parallel Search API · Script: Claude Opus 4.7 · Voices: Gemini 2.5 Flash TTS.</p>]]></description>
+      <pubDate>Wed, 03 Jun 2026 11:42:01 GMT</pubDate>
+      <enclosure url="https://zeroth-agents.github.io/pyrana-podcasts/episodes/PYRANA_Research_Intelligence_%E2%80%94_June_3_2026.mp3" length="6782784" type="audio/mpeg"/>
+      <guid isPermaLink="false">docs/episodes/PYRANA_Research_Intelligence_—_June_3_2026.mp3</guid>
+      <itunes:duration>921</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
     <item>
       <title><![CDATA[PYRANA Research Intelligence — June 2, 2026]]></title>
       <description><![CDATA[<p>Today's four papers share a single premise: the parts of an AI system that humans currently hand-tune — retrieval configurations, agent scaffolding, multi-agent reward functions, output verification rules — can and should learn themselves from execution traces. The episode walks from near-term actionable (a per-query retrieval router, a neuro-symbolic verification gate) through medium-term plausible (self-improving agent scaffolding) to longer-horizon vision (end-to-end RL over full multi-agent workflows).</p>
