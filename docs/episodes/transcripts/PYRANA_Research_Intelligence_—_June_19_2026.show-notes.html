@@ -1,0 +1,21 @@
+<p>Four papers land on the same fault line: the moment a governed agent stops reasoning and starts acting on the world. The episode traces this boundary across four layers — structured state management, probabilistic guardrail verification, credential authority in cloud tool-calls, and evaluator bias propagating silently through multi-agent pipelines. Together they sketch a more rigorous picture of what "governed execution" actually requires in production.</p>
+
+<p>For PYRANA and Cortex, the overlap with the current roadmap is unusually direct. LedgerAgent maps almost one-to-one onto AgentContext and the harness loop's pre-mutation gate. The probabilistic verification work reframes how pyrana-audit should report guardrail outcomes — not pass/fail, but a sound upper bound on violation probability, which regulated tenants will eventually demand. The Sovereign Execution Brokers paper goes straight at pyrana-auth and the gateway validate stage. And the evaluator-bias contagion paper is a warning shot at any PYRANA workflow that uses LLM judges to score other LLM outputs — bias doesn't stay local, it spreads.</p>
+
+<p><strong>Papers covered:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2606.20529">LedgerAgent: Structured State for Policy-Adherent Tool-Calling Agents</a> — agents maintain a structured, re-rendered state ledger and run deterministic predicate gates before any world-mutating tool call.</li>
+  <li><a href="https://arxiv.org/abs/2606.20510">Efficient and Sound Probabilistic Verification for AI Agents</a> — computes provable upper bounds on the probability that a guardrail violation slipped through, replacing binary pass/fail audit records.</li>
+  <li><a href="https://arxiv.org/abs/2606.20520">Sovereign Execution Brokers: Enforcing Certificate-Bound Authority in Agentic Control Planes</a> — proposes a brokered authority layer that binds cloud credentials to specific certified agent actions rather than ambient session permissions.</li>
+  <li><a href="https://arxiv.org/abs/2606.20493">Contagion Networks: Evaluator Bias Propagation in Multi-Agent LLM Systems</a> — shows that evaluator bias in multi-agent pipelines is contagious: one biased judge skews downstream agents that consume its outputs.</li>
+</ul>
+
+<p><strong>Takeaways for our platform:</strong></p>
+<ul>
+  <li>Prototype AgentContext as a LedgerAgent-style structured store this quarter: CxUs serve as ledger entries keyed by schema path, and approval-required tools in the harness loop run deterministic predicate checks against AgentContext before any mutation fires — no LLM self-policing.</li>
+  <li>Replace binary guardrail pass/fail in pyrana-audit with sound probabilistic bounds: regulated tenants will need a defensible ceiling on violation probability, not just a check mark, so evaluate DRO-based verification at the gateway validate stage.</li>
+  <li>Audit any PYRANA eval pipeline that chains LLM judges — if one judge's scores feed a downstream scoring agent, the contagion paper's result means a single biased evaluator can corrupt the whole chain; isolate judge outputs before they re-enter the CxU extraction loop.</li>
+</ul>
+<hr>
+<p><strong>How this episode was made</strong><br>
+Produced autonomously by the PYRANA Daily agent (v1.1). Research: Claude Sonnet 4.6 · Deeper compare: Parallel Search API · Script: Claude Opus 4.7 · Voices: Gemini 2.5 Flash TTS.</p>
