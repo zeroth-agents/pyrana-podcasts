@@ -7,6 +7,7 @@
  *   ANTHROPIC_API_KEY     — sk-ant-...
  *   GOOGLE_API_KEY        — Gemini API key (multi-speaker TTS)
  *   GITHUB_TOKEN          — fine-grained PAT, Contents: read+write on the host repo
+ *   PARALLEL_API_KEY      — Parallel.ai key (external paper comparison; optional)
  *
  * Everything below is non-secret tuning you can edit freely.
  */
@@ -74,9 +75,14 @@ const CONFIG = {
     scriptModel: 'claude-opus-4-7',
     researchMaxTokens: 8000,
     scriptMaxTokens: 16000,
+    // Length is adaptive: targetMinutes is the default, maxMinutes is the
+    // ceiling for unusually rich days (more papers / deeper material).
+    // Opus expands toward maxMinutes only when the notes justify it, and
+    // never pads thin days past the target. ~150 wpm.
     targetMinutes: 15,
-    // Floor the script length so Opus doesn't wrap up early when the
-    // soft target is "~N minutes". 150 wpm × minutes × 0.85 floor.
+    maxMinutes: 30,
+    // Floor the script length so Opus doesn't wrap up early. 150 wpm ×
+    // targetMinutes × 0.85 floor.
     minWords: 1900,
   },
 
@@ -92,6 +98,27 @@ const CONFIG = {
     model: 'gemini-2.5-flash-preview-tts',
     voiceA: 'Kore',     // HOST_A — warm
     voiceB: 'Charon',   // HOST_B — authoritative
+    // Per-host delivery direction, repeated in every TTS chunk prompt so
+    // each voice stays consistent start-to-finish (Gemini otherwise drifts
+    // subtly between calls). Keep voiceB's accent distinct from voiceA so
+    // the two are never mistaken for each other.
+    styleA: 'a warm, curious tone with a neutral American accent',
+    styleB: 'a crisp British accent and an authoritative, teacherly tone',
     sampleRate: 24000,  // Gemini TTS output rate (don't change)
+  },
+
+  // ─── Parallel.ai (external paper comparison) ──────────────────────
+  // Web search run during the research pass to compare each paper to
+  // outside work and the wider trend — a best-of-breed read that informs
+  // roadmap decisions. Set PARALLEL_API_KEY in Script Properties.
+  // Degrades gracefully: with no key or enabled=false, the research pass
+  // runs exactly as before. Each covered paper is one synchronous Search
+  // API call, so maxPapers bounds latency against the 6-min execution cap.
+  PARALLEL: {
+    enabled: true,
+    searchUrl: 'https://api.parallel.ai/v1/search',
+    maxResults: 5,            // results per paper query
+    maxCharsPerResult: 1200,  // excerpt char budget per result
+    maxPapers: 4,             // cap calls per episode (latency budget)
   },
 };
