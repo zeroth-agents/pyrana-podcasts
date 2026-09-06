@@ -7,6 +7,7 @@
  *   ANTHROPIC_API_KEY     — sk-ant-...
  *   GOOGLE_API_KEY        — Gemini API key (multi-speaker TTS)
  *   GITHUB_TOKEN          — fine-grained PAT, Contents: read+write on the host repo
+ *   PARALLEL_API_KEY      — Parallel Search API key (deeper-compare step; optional)
  *
  * Everything below is non-secret tuning you can edit freely.
  */
@@ -93,5 +94,35 @@ const CONFIG = {
     voiceA: 'Kore',     // HOST_A — warm
     voiceB: 'Charon',   // HOST_B — authoritative
     sampleRate: 24000,  // Gemini TTS output rate (don't change)
+  },
+
+  // ─── Parallel.ai (deeper compare) ─────────────────────────────────
+  // Before the research pass, we use Parallel's Search API to pull real
+  // prior/related work from the web for each paper. Those excerpts are
+  // threaded into the research notes so "Field connection" and the
+  // steel-manned objection are grounded in retrieved sources instead of
+  // model memory.
+  //
+  // Set PARALLEL_API_KEY in Script Properties to enable. If the key is
+  // absent, disabled here, or the API errors, the pipeline degrades
+  // gracefully: episodes still publish without the compare, and the
+  // show-notes credit will NOT claim it ran. The Search API is synchronous
+  // (one POST per paper) — unlike the async Task API it stays inside the
+  // 6-minute Apps Script execution ceiling.
+  PARALLEL: {
+    enabled: true,
+    endpoint: 'https://api.parallel.ai/v1/search',
+    maxPapersToCompare: 3,    // cap searches to protect the time budget
+    maxResultsPerPaper: 5,    // enforced client-side (API has no such param)
+    maxCharsPerResult: 2000,  // enforced client-side (excerpt truncation)
+  },
+
+  // ─── Production credit (show-notes footer) ────────────────────────
+  // Bump agentVersion when the pipeline changes materially (new model,
+  // new stage) so listeners can tell which generation produced an episode.
+  // Model names in the footer are derived from CONFIG above, so they stay
+  // accurate automatically when you swap models.
+  PRODUCTION: {
+    agentVersion: 'v1.1',     // v1.1 adds the Parallel deeper-compare stage
   },
 };

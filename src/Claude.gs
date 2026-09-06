@@ -48,7 +48,7 @@ function callClaude(model, maxTokens, system, userText) {
  * paper sources and produces structured per-paper notes the script
  * pass can lean on.
  */
-function generateResearchNotes(subject, emailBody, papers) {
+function generateResearchNotes(subject, emailBody, papers, compare) {
   const buildContext = CONFIG.PODCAST.buildContext || '';
 
   const system =
@@ -66,7 +66,8 @@ function generateResearchNotes(subject, emailBody, papers) {
     'Title: <paper title>\n' +
     'Authors: <first author et al, or short list>\n' +
     'Source depth: <full-text | abstract-only | digest-only> ' +
-    '(say honestly what you had access to)\n' +
+    '(say honestly what you had access to — the retrieved prior-work ' +
+    'section below is external context, not the paper itself)\n' +
     'Why it matters: <2-3 sentences. The actual reason a PYRANA/Cortex builder ' +
     'should care today.>\n' +
     'Core claim: <one sentence. The specific result, with numbers if available.>\n' +
@@ -95,6 +96,10 @@ function generateResearchNotes(subject, emailBody, papers) {
     '  • If source material is thin, set "Source depth" honestly and dial ' +
     'detail in "Mechanism" accordingly. The script pass needs to know what ' +
     'the hosts can confidently say vs. flag as a limit.\n' +
+    '  • If a "Prior & related work" section is provided below, use it to make ' +
+    '"Field connection" and "Steel-manned objection" specific — name the real ' +
+    'competing methods or benchmarks it surfaces. It is external context; never ' +
+    'attribute its claims to the paper under discussion.\n' +
     '  • Do not include any preamble, headers, or commentary outside the blocks.';
 
   let user = 'Today\'s digest email:\n\n' +
@@ -114,6 +119,9 @@ function generateResearchNotes(subject, emailBody, papers) {
             'be honest about the resulting depth limits.)\n\n';
   }
 
+  const compareBlock = formatCompareForPrompt(compare);
+  if (compareBlock) user += compareBlock + '\n';
+
   user += 'Write the research notes now.';
 
   return callClaude(
@@ -130,8 +138,11 @@ function generateResearchNotes(subject, emailBody, papers) {
  */
 function generatePodcastScript(subject, emailBody, papers) {
   Logger.log('  📚 ' + (papers ? papers.length : 0) + ' source paper(s) fetched');
+
+  const compare = deeperCompareForPapers(papers || []);
+
   Logger.log('  🔬 Research pass...');
-  const notes = generateResearchNotes(subject, emailBody, papers || []);
+  const notes = generateResearchNotes(subject, emailBody, papers || [], compare);
   Logger.log('  → ' + notes.length + ' chars of notes');
 
   Logger.log('  ✏️  Script pass...');
@@ -261,7 +272,7 @@ function generatePodcastScript(subject, emailBody, papers) {
     user
   );
 
-  return { turns: parseScript(raw), notes: notes };
+  return { turns: parseScript(raw), notes: notes, deeperCompare: compare.ran };
 }
 
 function parseScript(rawScript) {
@@ -301,8 +312,10 @@ function cleanLine(text) {
  *   subject     — email subject (becomes episode title)
  *   scriptTurns — parsed dialogue, for episode summary
  *   papers      — [{url, title, text}] from fetchAllPapers; URLs link out
+ *   opts        — { deeperCompare: bool } — drives the production credit
+ *                 footer so it only claims Parallel when it actually ran
  */
-function generateShowNotes(subject, scriptTurns, papers) {
+function generateShowNotes(subject, scriptTurns, papers, opts) {
   Logger.log('  📝 Show-notes pass...');
   const buildContext = CONFIG.PODCAST.buildContext || '';
 
@@ -360,7 +373,55 @@ function generateShowNotes(subject, scriptTurns, papers) {
     user
   );
 
-  return cleanShowNotesHtml(raw);
+  return cleanShowNotesHtml(raw) + '\n' + productionCreditHtml(opts);
+}
+
+/**
+ * Production credit footer appended to every episode's show notes — the
+ * "How this episode was made" section. Built from CONFIG so the model
+ * names stay accurate when models are swapped. The Parallel deeper-compare
+ * line appears only when it actually ran for this episode (opts.deeperCompare),
+ * so the credit never overclaims.
+ */
+function productionCreditHtml(opts) {
+  opts = opts || {};
+  const version = (CONFIG.PRODUCTION && CONFIG.PRODUCTION.agentVersion) || 'v1';
+
+  const steps = ['Research: ' + prettyModelName(CONFIG.CLAUDE.researchModel)];
+  if (opts.deeperCompare) steps.push('Deeper compare: Parallel Search API');
+  steps.push('Script: ' + prettyModelName(CONFIG.CLAUDE.scriptModel));
+  steps.push('Voices: ' + prettyModelName(CONFIG.GEMINI.model));
+
+  return '<hr>\n' +
+    '<p><strong>How this episode was made</strong><br>\n' +
+    'Produced autonomously by the ' + CONFIG.PODCAST.title + ' agent (' + version +
+    '). ' + steps.join(' · ') + '.</p>';
+}
+
+/**
+ * Turn a model ID into a human label for the credit footer.
+ * 'claude-sonnet-4-6'           → 'Claude Sonnet 4.6'
+ * 'claude-opus-4-7'             → 'Claude Opus 4.7'
+ * 'gemini-2.5-flash-preview-tts'→ 'Gemini 2.5 Flash TTS'
+ * Anything unrecognized falls back to the raw ID.
+ */
+function prettyModelName(id) {
+  if (!id) return '';
+
+  let m = id.match(/^claude-(opus|sonnet|haiku)-(\d+)-(\d+)/);
+  if (m) {
+    return 'Claude ' + m[1].charAt(0).toUpperCase() + m[1].slice(1) +
+           ' ' + m[2] + '.' + m[3];
+  }
+
+  m = id.match(/^gemini-([\d.]+)-(flash|pro)/);
+  if (m) {
+    let label = 'Gemini ' + m[1] + ' ' + m[2].charAt(0).toUpperCase() + m[2].slice(1);
+    if (/tts/i.test(id)) label += ' TTS';
+    return label;
+  }
+
+  return id;
 }
 
 /**

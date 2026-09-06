@@ -119,13 +119,20 @@ Then `npx clasp open` to open it in the browser.
 
 Apps Script editor → **Project Settings (gear) → Script Properties → Add script property**.
 
-Add three properties:
+Add these properties:
 
 | Property name | Value |
 |---|---|
 | `ANTHROPIC_API_KEY` | `sk-ant-...` |
 | `GOOGLE_API_KEY` | your Gemini API key |
 | `GITHUB_TOKEN` | `github_pat_...` from step 4 |
+| `PARALLEL_API_KEY` | Parallel Search API key — *optional* |
+
+`PARALLEL_API_KEY` enables the deeper-compare step: before the research
+pass, the bot pulls prior/related work for each paper from Parallel's
+Search API and feeds it into the notes. Leave it unset to skip the step —
+episodes still publish, and the show-notes credit only claims Parallel when
+it actually ran.
 
 Save.
 

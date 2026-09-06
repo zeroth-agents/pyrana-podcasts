@@ -101,6 +101,7 @@ The full step-by-step is in **SETUP.md**. The TL;DR:
    ANTHROPIC_API_KEY    = sk-ant-...           (Azure KV: demos-anthropic-api-key)
    GOOGLE_API_KEY       = ...                  (Azure KV: demos-google-gemini-api-key)
    GITHUB_TOKEN         = github_pat_...
+   PARALLEL_API_KEY     = ...                  (optional — enables the deeper-compare step)
    ```
 5. **Run setup steps in order** from the function dropdown:
 
